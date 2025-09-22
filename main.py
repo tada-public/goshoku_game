@@ -241,6 +241,7 @@ class Karuta:
         #print("update:{},{}".format(ith,self.hand[ith]))
         #pygame.mixer.music.load("ogg/{}_{}.ogg".format(self.col,self.hand[ith]))
         #pygame.mixer.music.play()
+        se_bgm.stop()
         se_bgm = pygame.mixer.Sound("ogg/{}_{}.ogg".format(self.col,self.hand[ith]))
         se_bgm.play()
         #print(wakas[self.col*20+self.hand[ith]])
@@ -370,9 +371,9 @@ async def main():
                 #pygame.mixer.music.stop()
                 #pygame.mixer.music.load("ogg/harunoumi_s.ogg")
                 #pygame.mixer.music.play()
-                se_bgm.stop()
-                se_bgm = pygame.mixer.Sound("ogg/harunoumi_s.ogg")
-                se_bgm.play()
+                #se_bgm.stop()
+                #se_bgm = pygame.mixer.Sound("ogg/harunoumi_s.ogg")
+                #se_bgm.play()
             #elif cnt==(SECTION_TIME-2)*FPS:
             #    pygame.mixer.music.fadeout(2*1000)
             elif cnt==SECTION_TIME*FPS:
@@ -399,12 +400,12 @@ async def main():
                     if res:
                         cnt=(SECTION_TIME-2)*FPS
                         #pygame.mixer.music.stop()
-                        se_bgm.stop()
+                        #se_bgm.stop()
             if game.cpuscore!=0 and cnt==game.cpuframes[read_cnt-1] and game.get_posid_hand(read_cnt-1) !=99:
                 game.cpu_atack(read_cnt-1)
                 cnt=(SECTION_TIME-2)*FPS
                 #pygame.mixer.music.stop()
-                se_bgm.stop()
+                #se_bgm.stop()
             game.draw_board(cnt,stage)
         # FPS表示
         #fps = str(int(clock.get_fps()))
@@ -421,4 +422,5 @@ async def main():
 asyncio.run(main())
 
     
+
 
