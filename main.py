@@ -239,8 +239,10 @@ class Karuta:
 
     def reset_section(self,ith):
         #print("update:{},{}".format(ith,self.hand[ith]))
-        pygame.mixer.music.load("ogg/{}_{}.ogg".format(self.col,self.hand[ith]))
-        pygame.mixer.music.play()
+        #pygame.mixer.music.load("ogg/{}_{}.ogg".format(self.col,self.hand[ith]))
+        #pygame.mixer.music.play()
+        se_bgm = pygame.mixer.Sound("ogg/{}_{}.ogg".format(self.col,self.hand[ith]))
+        se_bgm.play()
         #print(wakas[self.col*20+self.hand[ith]])
 
     def draw_select_board(self):
@@ -279,10 +281,11 @@ class Karuta:
         screen.blit(text, text_rect)
 
     def reset_section_select(self):
-        pygame.mixer.music.stop()
-        pygame.mixer.music.load("ogg/harunoumi_S.ogg")
-        pygame.mixer.music.play()
-
+        #pygame.mixer.music.stop()
+        #pygame.mixer.music.load("ogg/harunoumi_s.ogg")
+        #pygame.mixer.music.play()
+        se_bgm = pygame.mixer.Sound("ogg/harunoumi_s.ogg")
+        se_bgm.play()
     def selected(self,x,y):
             if x in [0,1,2,3,4] and y in [1,2]:
                 self.col = x
@@ -362,11 +365,13 @@ async def main():
                 if event.type == pygame.QUIT:
                     running = False
             if cnt==0:
-                pygame.mixer.music.stop()
-                pygame.mixer.music.load("ogg/harunoumi_s.ogg")
-                pygame.mixer.music.play()
-            elif cnt==(SECTION_TIME-2)*FPS:
-                pygame.mixer.music.fadeout(2*1000)
+                #pygame.mixer.music.stop()
+                #pygame.mixer.music.load("ogg/harunoumi_s.ogg")
+                #pygame.mixer.music.play()
+                se_bgm = pygame.mixer.Sound("ogg/harunoumi_s.ogg")
+                se_bgm.play()
+            #elif cnt==(SECTION_TIME-2)*FPS:
+            #    pygame.mixer.music.fadeout(2*1000)
             elif cnt==SECTION_TIME*FPS:
                 cnt = -1
                 stage=2
@@ -390,11 +395,11 @@ async def main():
                     res=game.update(x,y,read_cnt-1,100-int(100/(SECTION_TIME*FPS)*cnt))
                     if res:
                         cnt=(SECTION_TIME-2)*FPS
-                        pygame.mixer.music.stop()
+                        #pygame.mixer.music.stop()
             if game.cpuscore!=0 and cnt==game.cpuframes[read_cnt-1] and game.get_posid_hand(read_cnt-1) !=99:
                 game.cpu_atack(read_cnt-1)
                 cnt=(SECTION_TIME-2)*FPS
-                pygame.mixer.music.stop()
+                #pygame.mixer.music.stop()
             game.draw_board(cnt,stage)
         # FPS表示
         #fps = str(int(clock.get_fps()))
@@ -409,4 +414,5 @@ async def main():
 
 
 asyncio.run(main())
+
     
