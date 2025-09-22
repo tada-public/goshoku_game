@@ -42,7 +42,7 @@ color_char=(250,250,250)
 pygame.init()
 pygame.mixer.init()
 volume=0.7
-pygame.mixer.music.set_volume(volume)
+#pygame.mixer.music.set_volume(volume)
 screen = pygame.display.set_mode(SIZE,pygame.RESIZABLE)
 pygame.display.set_caption("Goshoku_Hyakunin_Isshu")
 clock = pygame.time.Clock()
@@ -56,6 +56,11 @@ se_shouri2 = pygame.mixer.Sound("ogg/sentou-syouri2.ogg")
 se_shouri3 = pygame.mixer.Sound("ogg/sentou-syouri3.ogg")
 se_shouri4 = pygame.mixer.Sound("ogg/sentou-syouri4.ogg")
 se_shouri5 = pygame.mixer.Sound("ogg/sentou-syouri5.ogg")
+se_bgm = pygame.mixer.Sound("ogg/harunoumi_s.ogg")
+se_waka=[]
+for c in range(5):
+    for i in range(20):
+        se_waka.append(pygame.mixer.Sound("ogg/{}_{}.ogg".format(c,i)))
 #fi=open("goshoku8.csv", encoding='utf-8')
 #lines=fi.readlines()
 #fi.close()
@@ -239,8 +244,9 @@ class Karuta:
 
     def reset_section(self,ith):
         #print("update:{},{}".format(ith,self.hand[ith]))
-        pygame.mixer.music.load("ogg/{}_{}.ogg".format(self.col,self.hand[ith]))
-        pygame.mixer.music.play()
+        #pygame.mixer.music.load("ogg/{}_{}.ogg".format(self.col,self.hand[ith]))
+        #pygame.mixer.music.play()
+        se_waka[self.col*20+self.hand[ith]].play()
         #print(wakas[self.col*20+self.hand[ith]])
 
     def draw_select_board(self):
@@ -279,10 +285,11 @@ class Karuta:
         screen.blit(text, text_rect)
 
     def reset_section_select(self):
-        pygame.mixer.music.stop()
-        pygame.mixer.music.load("ogg/harunoumi_S.ogg")
-        pygame.mixer.music.play()
-
+        #pygame.mixer.music.stop()
+        #pygame.mixer.music.load("ogg/harunoumi_s.ogg")
+        #pygame.mixer.music.play()
+        pygame.mixer.stop()
+        se_bgm.play()
     def selected(self,x,y):
             if x in [0,1,2,3,4] and y in [1,2]:
                 self.col = x
@@ -351,7 +358,7 @@ async def main():
                     y //= GRID_SIZE[1]
                     res=game.selected(x,y)
                     if res:
-                        pygame.mixer.music.stop()
+                        pygame.mixer.stop()
                         stage = 1
                         cnt = -1
                         if game.cpuscore!=0:
@@ -362,11 +369,13 @@ async def main():
                 if event.type == pygame.QUIT:
                     running = False
             if cnt==0:
-                pygame.mixer.music.stop()
-                pygame.mixer.music.load("ogg/harunoumi_s.ogg")
-                pygame.mixer.music.play()
-            elif cnt==(SECTION_TIME-2)*FPS:
-                pygame.mixer.music.fadeout(2*1000)
+                #pygame.mixer.music.stop()
+                #pygame.mixer.music.load("ogg/harunoumi_s.ogg")
+                #pygame.mixer.music.play()
+                pygame.mixer.stop()
+                #se_bgm.play()
+            #elif cnt==(SECTION_TIME-2)*FPS:
+            #    pygame.mixer.music.fadeout(2*1000)
             elif cnt==SECTION_TIME*FPS:
                 cnt = -1
                 stage=2
@@ -390,11 +399,12 @@ async def main():
                     res=game.update(x,y,read_cnt-1,100-int(100/(SECTION_TIME*FPS)*cnt))
                     if res:
                         cnt=(SECTION_TIME-2)*FPS
-                        pygame.mixer.music.stop()
+                        #pygame.mixer.music.stop()
+                        pygame.mixer.stop()
             if game.cpuscore!=0 and cnt==game.cpuframes[read_cnt-1] and game.get_posid_hand(read_cnt-1) !=99:
                 game.cpu_atack(read_cnt-1)
                 cnt=(SECTION_TIME-2)*FPS
-                pygame.mixer.music.stop()
+                pygame.mixer.stop()
             game.draw_board(cnt,stage)
         # FPS表示
         #fps = str(int(clock.get_fps()))
