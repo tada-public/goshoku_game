@@ -219,15 +219,7 @@ class Karuta:
         text_rect.move_ip(self.x0, self.y0)
         screen.blit(text, text_rect)
         pygame.display.flip()
-        remaintime=SECTION_TIME_RESULT*FPS
-        for i in range(remaintime):
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-            clock.tick(FPS)
-        pygame.quit()
-        sys.exit()
+
     
     def update(self,x,y,ith,thisscore):
         if self.board[BOARD_SIZE[0]*y+x] == self.hand[ith]:
@@ -388,6 +380,16 @@ async def main():
                 read_cnt += 1
                 if read_cnt > READ_CARDS:
                     game.display_result()
+                    remaintime=SECTION_TIME_RESULT*FPS
+                    for i in range(remaintime):
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                pygame.quit()
+                                sys.exit()
+                        clock.tick(FPS)
+                        await asyncio.sleep(0) 
+                    pygame.quit()
+                    sys.exit()
                 game.reset_section(read_cnt-1)
                 cnt = 0
             for event in pygame.event.get():
