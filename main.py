@@ -391,7 +391,8 @@ async def main():
                         await asyncio.sleep(0) 
                     pygame.quit()
                     sys.exit()
-                game.reset_section(read_cnt-1)
+                else:
+                    game.reset_section(read_cnt-1)
                 cnt = 0
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -426,4 +427,5 @@ async def main():
 
 asyncio.run(main())
     
+
 
