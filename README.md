@@ -1,4 +1,4 @@
-#  Special Thanks used musics
+#  Special Thanks - Used Musics
 - 戦闘終了音
 MOMIZizm MUSiC（もみじば）
 https://music.storyinvention.com/
