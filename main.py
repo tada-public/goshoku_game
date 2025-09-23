@@ -196,23 +196,23 @@ class Karuta:
                 font = pygame.font.Font(None, FONT_SIZE_RESULT)
                 text = font.render("Try again!", True, YELLOW)
         elif self.score>=1400:
-            se_shouri3.play()
+            se_shouri.play()
             font = pygame.font.Font(None, FONT_SIZE_RESULT)
             text = font.render("Fantastic!!", True, YELLOW)        
         elif self.score>=1300:
-            se_shouri3.play()
+            se_shouri2.play()
             font = pygame.font.Font(None, FONT_SIZE_RESULT)
             text = font.render("Congratulations!", True, YELLOW)
         elif self.score>=1200:
-            se_shouri4.play()
+            se_shouri3.play()
             font = pygame.font.Font(None, FONT_SIZE_RESULT)
             text = font.render("Good Job!", True, YELLOW)
         elif self.score>=1100:
-            se_shouri5.play()
+            se_shouri4.play()
             font = pygame.font.Font(None, FONT_SIZE_RESULT)
             text = font.render("Finish!", True, YELLOW)
         else:
-            se_shouri2.play()
+            se_shouri5.play()
             font = pygame.font.Font(None, FONT_SIZE_RESULT)
             text = font.render("Finish...", True, YELLOW)
         text_rect = text.get_rect(center=(SIZE[0] // 2, SIZE[1] // 2))
@@ -246,6 +246,7 @@ class Karuta:
         #print("update:{},{}".format(ith,self.hand[ith]))
         #pygame.mixer.music.load("ogg/{}_{}.ogg".format(self.col,self.hand[ith]))
         #pygame.mixer.music.play()
+        pygame.mixer.stop()
         se_waka[self.col*20+self.hand[ith]].play()
         #print(wakas[self.col*20+self.hand[ith]])
 
@@ -291,7 +292,7 @@ class Karuta:
         pygame.mixer.stop()
         se_bgm.play()
     def selected(self,x,y):
-            if x in [0,1,2,3,4] and y in [1,2]:
+            if x in [0,1,2,3,4] and y in [1]:
                 self.col = x
                 se_maru.play()
                 self.this_img=[]
@@ -358,7 +359,7 @@ async def main():
                     y //= GRID_SIZE[1]
                     res=game.selected(x,y)
                     if res:
-                        pygame.mixer.stop()
+                        #pygame.mixer.stop()
                         stage = 1
                         cnt = -1
                         if game.cpuscore!=0:
@@ -372,8 +373,10 @@ async def main():
                 #pygame.mixer.music.stop()
                 #pygame.mixer.music.load("ogg/harunoumi_s.ogg")
                 #pygame.mixer.music.play()
-                pygame.mixer.stop()
+                #pygame.mixer.stop()
                 #se_bgm.play()
+                pass
+                
             #elif cnt==(SECTION_TIME-2)*FPS:
             #    pygame.mixer.music.fadeout(2*1000)
             elif cnt==SECTION_TIME*FPS:
@@ -400,11 +403,11 @@ async def main():
                     if res:
                         cnt=(SECTION_TIME-2)*FPS
                         #pygame.mixer.music.stop()
-                        pygame.mixer.stop()
+                        #pygame.mixer.stop()
             if game.cpuscore!=0 and cnt==game.cpuframes[read_cnt-1] and game.get_posid_hand(read_cnt-1) !=99:
                 game.cpu_atack(read_cnt-1)
                 cnt=(SECTION_TIME-2)*FPS
-                pygame.mixer.stop()
+                #pygame.mixer.stop()
             game.draw_board(cnt,stage)
         # FPS表示
         #fps = str(int(clock.get_fps()))
