@@ -75,6 +75,7 @@ for c in range(5):
         img[c].append(pygame.image.load("pic/{}_{}.png".format(c,i)).convert())
 class Karuta:
     def __init__(self):
+        random.seed()
         self.board=[]*BOARD_SIZE[0]*BOARD_SIZE[1]
         b=list(range(BOARD_SIZE[0]*BOARD_SIZE[1]))
         random.shuffle(b)
@@ -380,7 +381,7 @@ async def main():
                 read_cnt += 1
                 if read_cnt > READ_CARDS:
                     game.display_result()
-                    remaintime=SECTION_TIME_RESULT*FPS
+                    remaintime=SECTION_TIME_RESULT*FPS*10 #just expand 10 times
                     for i in range(remaintime):
                         for event in pygame.event.get():
                             if event.type == pygame.QUIT:
@@ -425,3 +426,4 @@ async def main():
 
 asyncio.run(main())
     
+
