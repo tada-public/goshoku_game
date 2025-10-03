@@ -43,7 +43,11 @@ pygame.init()
 pygame.mixer.init()
 volume=0.7
 #pygame.mixer.music.set_volume(volume)
-screen = pygame.display.set_mode(SIZE,pygame.RESIZABLE)
+info = pygame.display.Info()
+screenWidth = info.current_w
+screenHeight = info.current_h
+screen = pygame.display.set_mode((screenWidth,screenHeight),pygame.RESIZABLE)
+#screen = pygame.display.set_mode(SIZE,pygame.RESIZABLE)
 pygame.display.set_caption("Goshoku_Hyakunin_Isshu")
 clock = pygame.time.Clock()
 
@@ -427,5 +431,6 @@ async def main():
 
 asyncio.run(main())
     
+
 
 
