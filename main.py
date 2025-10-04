@@ -59,7 +59,7 @@ for c in range(5):
     for i in range(20):
         img[c].append(pygame.image.load("pic/{}_{}.png".format(c,i)).convert())
 
-background_image = pygame.image.load('noise_image_g.png')  # 画像ファイルのパスを指定
+background_image = pygame.image.load('pic/noise_image_g.png')  # 画像ファイルのパスを指定
 #bg_width, bg_height = background_image.get_size()  # 背景画像の幅と高さを取得
 #background_scaled = pygame.transform.scale(background_image, SIZE)
 class Karuta:
@@ -392,3 +392,4 @@ async def main():
 
 asyncio.run(main())
     
+
