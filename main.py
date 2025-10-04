@@ -3,13 +3,9 @@ import sys
 import random
 import asyncio
 
-# 定数の定義
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
 GREEN = (0, 128, 0)
 YELLOW = (255, 155, 0)
 BOARD_SIZE=(5,4)
-GRID_SIZE_ORG=(265,365)
 GRID_SIZE=(165,220)
 CARD_SIZE=(145,200)
 FULL_CARDS=BOARD_SIZE[0]*BOARD_SIZE[1]
@@ -38,19 +34,12 @@ colors_code_S30=["#c2f0ff","#ffe0f0","#fff0b3","#c7ffda","#ffe0c2"]
 colors_code_S30_alpha=[(194,240,255),(255,224,240),(255,240,179),(199,255,218),(255,224,194)]
 color_char=(250,250,250)
 
-# Pygameの初期化
 pygame.init()
 pygame.mixer.init()
 volume=0.7
-#pygame.mixer.music.set_volume(volume)
-info = pygame.display.Info()
-screenWidth = info.current_w
-screenHeight = info.current_h
-#screen = pygame.display.set_mode((screenWidth,screenHeight),pygame.RESIZABLE)
 screen = pygame.display.set_mode(SIZE,pygame.RESIZABLE)
 pygame.display.set_caption("Goshoku_Hyakunin_Isshu")
 clock = pygame.time.Clock()
-
 se_binta01 = pygame.mixer.Sound("ogg/binta01.ogg")
 se_maru = pygame.mixer.Sound("ogg/maru.ogg")
 se_atack = pygame.mixer.Sound("ogg/atack.ogg")
@@ -65,31 +54,24 @@ se_waka=[]
 for c in range(5):
     for i in range(20):
         se_waka.append(pygame.mixer.Sound("ogg/{}_{}.ogg".format(c,i)))
-#fi=open("goshoku8.csv", encoding='utf-8')
-#lines=fi.readlines()
-#fi.close()
-#wakas=[]
-#for line in lines:
-#    words=line.rstrip().split(',')
-#    script=words[1]
-#    wakas.append(script)
 img=[[] for i in range(5)]
 for c in range(5):
     for i in range(20):
         img[c].append(pygame.image.load("pic/{}_{}.png".format(c,i)).convert())
+
+background_image = pygame.image.load('noise_image_g.png')  # 画像ファイルのパスを指定
+#bg_width, bg_height = background_image.get_size()  # 背景画像の幅と高さを取得
+#background_scaled = pygame.transform.scale(background_image, SIZE)
 class Karuta:
     def __init__(self):
         random.seed()
         self.board=[]*BOARD_SIZE[0]*BOARD_SIZE[1]
         b=list(range(BOARD_SIZE[0]*BOARD_SIZE[1]))
         random.shuffle(b)
-        #print(b)
         self.board=b
-
         self.hand=[]*BOARD_SIZE[0]*BOARD_SIZE[1]
         h=list(range(BOARD_SIZE[0]*BOARD_SIZE[1]))
         random.shuffle(h)
-        #print(h)
         self.hand=h
         self.invisible_flag=0
         self.cpuscore=0
@@ -129,7 +111,6 @@ class Karuta:
             err_e=[0]*READ_CARDS
             for i in range(abs(err)):
                 self.cpuframes[i%READ_CARDS]+=err/abs(err) #-1 or 1
-        #tilt
         tiltfunc=[0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.6,-0.7,-0.8]
         for i in range(READ_CARDS):
             self.cpuframes[i]+int(tiltfunc[i]*FPS)
@@ -146,6 +127,7 @@ class Karuta:
         if(cnt<0):
             cnt=0
         screen.fill(GREEN)
+        screen.blit(background_image, (self.x0, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
         for i in range(FULL_CARDS):
             if self.board[i] is not None:
                 gridpos=(i%BOARD_SIZE[0],i//BOARD_SIZE[0])
@@ -162,7 +144,7 @@ class Karuta:
                 self.move=[0,0,0,0,0]
         font_size=32
         score_board_sukima=10
-        font = pygame.font.SysFont('meiryo.ttc', font_size)
+        font = pygame.font.SysFont('ipaexg.ttc', font_size)
         text=font.render("SCORE",True, color_char)
         screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+score_board_sukima))
         text=font.render("{}".format(self.score),True, color_char)
@@ -184,7 +166,6 @@ class Karuta:
                 alpha=255
             else:
                 alpha=255-int(255/(SECTION_TIME-INVISIBLE_TIME)*(cnt/FPS-INVISIBLE_TIME))
-            #透明を有効にしたsurface
             pos=(self.x0+ gridpos[0] * GRID_SIZE[0]+SUKIMA+BANDWIDTH, self.y0+gridpos[1] * GRID_SIZE[1]+SUKIMA+BANDWIDTH)
             hidescr =pygame.Surface(INVISIBLE_SIZE,flags=pygame.SRCALPHA)
             hidescr.fill((colors_code_S30_alpha[self.col][0],colors_code_S30_alpha[self.col][1],colors_code_S30_alpha[self.col][2],alpha))
@@ -240,15 +221,11 @@ class Karuta:
             return False
 
     def reset_section(self,ith):
-        #print("update:{},{}".format(ith,self.hand[ith]))
-        #pygame.mixer.music.load("ogg/{}_{}.ogg".format(self.col,self.hand[ith]))
-        #pygame.mixer.music.play()
         pygame.mixer.stop()
         se_waka[self.col*20+self.hand[ith]].play()
-        #print(wakas[self.col*20+self.hand[ith]])
-
     def draw_select_board(self):
         screen.fill(GREEN)
+        screen.blit(background_image, (self.x0, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
         font_size=32
         font = pygame.font.SysFont('ipaexg.ttf', font_size)
         for i in range(BOARD_SIZE[0]*1):
@@ -283,9 +260,6 @@ class Karuta:
         screen.blit(text, text_rect)
 
     def reset_section_select(self):
-        #pygame.mixer.music.stop()
-        #pygame.mixer.music.load("ogg/harunoumi_s.ogg")
-        #pygame.mixer.music.play()
         pygame.mixer.stop()
         se_bgm.play()
     def selected(self,x,y):
@@ -356,7 +330,6 @@ async def main():
                     y //= GRID_SIZE[1]
                     res=game.selected(x,y)
                     if res:
-                        #pygame.mixer.stop()
                         stage = 1
                         cnt = -1
                         if game.cpuscore!=0:
@@ -367,15 +340,7 @@ async def main():
                 if event.type == pygame.QUIT:
                     running = False
             if cnt==0:
-                #pygame.mixer.music.stop()
-                #pygame.mixer.music.load("ogg/harunoumi_s.ogg")
-                #pygame.mixer.music.play()
-                #pygame.mixer.stop()
-                #se_bgm.play()
                 pass
-                
-            #elif cnt==(SECTION_TIME-2)*FPS:
-            #    pygame.mixer.music.fadeout(2*1000)
             elif cnt==SECTION_TIME*FPS:
                 cnt = -1
                 stage=2
@@ -385,7 +350,7 @@ async def main():
                 read_cnt += 1
                 if read_cnt > READ_CARDS:
                     game.display_result()
-                    remaintime=SECTION_TIME_RESULT*FPS*10 #just expand 10 times
+                    remaintime=SECTION_TIME_RESULT*FPS*10
                     for i in range(remaintime):
                         for event in pygame.event.get():
                             if event.type == pygame.QUIT:
@@ -410,17 +375,13 @@ async def main():
                     res=game.update(x,y,read_cnt-1,100-int(100/(SECTION_TIME*FPS)*cnt))
                     if res:
                         cnt=(SECTION_TIME-2)*FPS
-                        #pygame.mixer.music.stop()
-                        #pygame.mixer.stop()
+
             if game.cpuscore!=0 and cnt==game.cpuframes[read_cnt-1] and game.get_posid_hand(read_cnt-1) !=99:
                 game.cpu_atack(read_cnt-1)
                 cnt=(SECTION_TIME-2)*FPS
                 #pygame.mixer.stop()
             game.draw_board(cnt,stage)
-        # FPS表示
-        #fps = str(int(clock.get_fps()))
-        #fps_text = font.render(f"FPS: {fps}", True, YELLOW)
-        #screen.blit(fps_text, (10, 10))
+
         pygame.display.flip()
         clock.tick(FPS)
         await asyncio.sleep(0) 
@@ -431,7 +392,3 @@ async def main():
 
 asyncio.run(main())
     
-
-
-
-
