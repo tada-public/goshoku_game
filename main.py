@@ -25,6 +25,8 @@ BANDWIDTH=7
 INVISIBLE_SIZE=(CARD_SIZE[0]-BANDWIDTH*2,CARD_SIZE[1]-BANDWIDTH*2)
 INVISIBLE_TIME=2 #sec, completely invisible
 FONT_SIZE_RESULT=74
+STARTBTN_POS=[GRID_SIZE[0]*BOARD_SIZE[0]+BAR_W//2, GRID_SIZE[1]*BOARD_SIZE[1]-BAR_W]
+STARTBTN_SIZE=[80, 60]
 colors=["あお","ぴんく","きー","みどり","おれんじ"]
 colors_kanji=["青札","桃札","黄札","緑札","橙札"]
 colors_eng=["BLUE","PINK","YELLOW","GREEN","ORANGE"]
@@ -74,6 +76,12 @@ class Karuta:
         random.shuffle(h)
         self.hand=h
         self.invisible_flag=0
+        self.draggingflag=False
+        self.draggingItemIndex=None
+        self.drgOffsetX=0
+        self.drgOffsetY=0
+        self.drgCornerOffsetX=0
+        self.drgCornerOffsetY=0
         self.cpuscore=0
         self.score=0
         self.obtainedcard=0
@@ -129,9 +137,11 @@ class Karuta:
         screen.fill(GREEN)
         screen.blit(background_image, (self.x0, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
         for i in range(FULL_CARDS):
-            if self.board[i] is not None:
+            if self.board[i] is not None and i != self.draggingItemIndex:
                 gridpos=(i%BOARD_SIZE[0],i//BOARD_SIZE[0])
                 self.draw_card(gridpos, self.board[i],cnt,stage)
+        if self.draggingItemIndex != None and self.drgCornerOffsetX != 0:
+                screen.blit(self.this_img[self.board[self.draggingItemIndex]], (self.drgCornerOffsetX,self.drgCornerOffsetY))
         if self.moveflag:
             if self.move[3]>1:
                 temp_pos=(self.x0+self.move[0]*GRID_SIZE[0]+SUKIMA,self.y0+self.move[1]*GRID_SIZE[1]+SUKIMA)
@@ -155,7 +165,10 @@ class Karuta:
         screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*3+score_board_sukima))
         text=font.render("TIME",True, color_char)
         screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*5+score_board_sukima))
-        text=font.render("{}".format(SECTION_TIME-int(cnt/FPS)),True, color_char)
+        if stage==1:
+            text=font.render("inf.",True, color_char)
+        else:
+            text=font.render("{}".format(SECTION_TIME-int(cnt/FPS)),True, color_char)            
         screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*6+score_board_sukima))
 
     def draw_card(self, gridpos, card_id,cnt,stage):
@@ -280,6 +293,20 @@ class Karuta:
         w, h = pygame.display.get_surface().get_size()
         self.x0=int((w-SIZE[0])/2)
         self.y0=int((h-SIZE[1])/2)
+    def draw_startbtn(self):
+        font = pygame.font.Font(None, 36)
+        # ボタンのサイズと位置
+        x, y = GRID_SIZE[0]*BOARD_SIZE[0]+BAR_W//2, GRID_SIZE[1]*BOARD_SIZE[1]-BAR_W # ボタンの中心座標
+        w, h = 80, 60   # ボタンの幅と高さ
+        # ボタンの色
+        button_color = 'darkgray'
+        text_color = 'black'
+        button_rect = pygame.Rect(self.x0 + x - w // 2, self.y0 + y - h // 2, w, h)
+        # ボタンを描画
+        pygame.draw.rect(screen, button_color, button_rect)
+        text = font.render("START", True, text_color)
+        text_rect = text.get_rect(center=(x, y))
+        screen.blit(text, text_rect)
 async def main():
     game = Karuta()
     running = True
@@ -339,12 +366,66 @@ async def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    print("here!")
+                    px, py = event.pos
+                    px-=game.x0
+                    py-=game.y0
+                    #dragcheck
+                    x=px//GRID_SIZE[0]
+                    y=py//GRID_SIZE[1]
+                    idx = y * BOARD_SIZE[0]+x
+                    if 0<= idx < FULL_CARDS:
+                        print("drgset!")
+                        game.draggingItemIndex = idx
+                        game.drgOffsetX = px - x * GRID_SIZE[0]
+                        game.drgOffsetY = py - y * GRID_SIZE[1]
+                    elif (STARTBTN_POS[0] -STARTBTN_SIZE[0]/2 <= px <= STARTBTN_POS[0]+STARTBTN_SIZE[0]/2)\
+                        and STARTBTN_POS[1] -STARTBTN_SIZE[1]/2 <= py <= STARTBTN_POS[1]+STARTBTN_SIZE[1]/2:
+                        print("in START BTN")
+                        cnt = (SECTION_TIME-2)*FPS
+                        game.draggingItemIndex=None
+                        game.drgOffsetX=0
+                        game.drgOffsetY=0
+                        game.drgCornerOffsetX=0
+                        game.drgCornerOffsetY=0
+                        se_maru.play()
+                        stage=2
+                elif event.type == pygame.MOUSEMOTION:
+                    if game.draggingItemIndex != None:
+                        px, py = event.pos
+                        px-=game.x0
+                        py-=game.y0
+                        game.drgCornerOffsetX=px - game.drgOffsetX
+                        game.drgCornerOffsetY=py - game.drgOffsetY
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if game.draggingItemIndex != None:
+                        px, py = event.pos
+                        px-=game.x0
+                        py-=game.y0
+                        #dragcheck
+                        x=px//GRID_SIZE[0]
+                        y=py//GRID_SIZE[1]
+                        idx = y * BOARD_SIZE[0]+x
+                        if 0 <= idx < FULL_CARDS:
+                            game.board[game.draggingItemIndex],game.board[idx]=game.board[idx],game.board[game.draggingItemIndex]
+                            if (game.draggingItemIndex -10) * (idx -10) < 0:
+                                game.this_img[game.board[game.draggingItemIndex]]=pygame.transform.rotate(game.this_img[game.board[game.draggingItemIndex]], 180)
+                                game.this_img[game.board[idx]]=pygame.transform.rotate(game.this_img[game.board[idx]], 180)
+                        game.draggingItemIndex = None
+                        game.drgCornerOffsetX=0
+                        game.drgCornerOffsetY=0 
+                        game.drgOffsetX=0
+                        game.drgOffsetY=0
+                        print("drgclear!")
+                    print("drgclear_out!")
             if cnt==0:
                 pass
             elif cnt==SECTION_TIME*FPS:
                 cnt = -1
-                stage=2
+                #stage=2
             game.draw_board(cnt,stage)
+            game.draw_startbtn()
         elif stage==2:
             if cnt%(SECTION_TIME*FPS)==0:
                 read_cnt += 1
@@ -392,4 +473,3 @@ async def main():
 
 asyncio.run(main())
     
-
