@@ -61,6 +61,8 @@ for c in range(5):
     for i in range(20):
         img[c].append(pygame.image.load("pic/{}_{}.png".format(c,i)).convert())
 
+infile=open('goshoku8.csv','r',encoding='utf-8')
+char_waka=lines=infile.readlines()
 background_image = pygame.image.load('pic/noise_image_g.png')  # 画像ファイルのパスを指定
 #bg_width, bg_height = background_image.get_size()  # 背景画像の幅と高さを取得
 #background_scaled = pygame.transform.scale(background_image, SIZE)
@@ -82,6 +84,7 @@ class Karuta:
         self.drgOffsetY=0
         self.drgCornerOffsetX=0
         self.drgCornerOffsetY=0
+        self.char_flag=True
         self.cpuscore=0
         self.score=0
         self.obtainedcard=0
@@ -131,7 +134,7 @@ class Karuta:
                 self.moveflag=True
                 self.move=[i%BOARD_SIZE[0],int(i/BOARD_SIZE[0]),ith,MOVE_FRAME,0]
         
-    def draw_board(self,cnt,stage):
+    def draw_board(self,cnt,stage,ith):
         if(cnt<0):
             cnt=0
         screen.fill(GREEN)
@@ -170,6 +173,14 @@ class Karuta:
         else:
             text=font.render("{}".format(SECTION_TIME-int(cnt/FPS)),True, color_char)            
         screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*6+score_board_sukima))
+        if(stage==2 and self.char_flag and ith < FULL_CARDS):
+            font = pygame.font.SysFont('ipaexg.ttc', font_size)
+            char_rect = pygame.Rect(self.x0+GRID_SIZE[0]*BOARD_SIZE[0]+(BAR_W-font_size)//2, self.y0+SIZE[1]//2-font_size//2, font_size, font_size)
+            #pygame.draw.rect(screen, 'green', char_rect)
+            text = font.render(char_waka[self.col*20+self.hand[ith]][5], True, 'white')
+            #print(char_waka[self.col*20+self.hand[ith]][6])
+            text_rect = text.get_rect(center=(char_rect[0], char_rect[1]))
+            #screen.blit(text, text_rect)
 
     def draw_card(self, gridpos, card_id,cnt,stage):
         pos=(self.x0+gridpos[0] * GRID_SIZE[0]+SUKIMA, self.y0+gridpos[1] * GRID_SIZE[1]+SUKIMA)
@@ -236,6 +247,7 @@ class Karuta:
     def reset_section(self,ith):
         pygame.mixer.stop()
         se_waka[self.col*20+self.hand[ith]].play()
+
     def draw_select_board(self):
         screen.fill(GREEN)
         screen.blit(background_image, (self.x0, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
@@ -294,15 +306,15 @@ class Karuta:
         self.x0=int((w-SIZE[0])/2)
         self.y0=int((h-SIZE[1])/2)
     def draw_startbtn(self):
-        font = pygame.font.Font(None, 36)
-        # ボタンのサイズと位置
+        font = pygame.font.Font(None, 24)
         x, y = GRID_SIZE[0]*BOARD_SIZE[0]+BAR_W//2, GRID_SIZE[1]*BOARD_SIZE[1]-BAR_W # ボタンの中心座標
         w, h = 80, 60   # ボタンの幅と高さ
-        # ボタンの色
-        button_color = 'darkgray'
-        text_color = 'black'
-        button_rect = pygame.Rect(self.x0 + x - w // 2, self.y0 + y - h // 2, w, h)
-        # ボタンを描画
+        button_color = 'azure1'
+        button_color_edge = 'azure3'
+        text_color = 'darkgreen'
+        button_rect = pygame.Rect(self.x0+x-w//2+5, self.y0+y-h//2+5, w-10, h-10)
+        button_rect_edge = pygame.Rect(self.x0 + x - w // 2, self.y0 + y - h // 2, w, h)
+        pygame.draw.rect(screen, button_color_edge, button_rect_edge)
         pygame.draw.rect(screen, button_color, button_rect)
         text = font.render("START", True, text_color)
         text_rect = text.get_rect(center=(x, y))
@@ -367,7 +379,6 @@ async def main():
                 if event.type == pygame.QUIT:
                     running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    print("here!")
                     px, py = event.pos
                     px-=game.x0
                     py-=game.y0
@@ -376,13 +387,13 @@ async def main():
                     y=py//GRID_SIZE[1]
                     idx = y * BOARD_SIZE[0]+x
                     if 0<= idx < FULL_CARDS:
-                        print("drgset!")
                         game.draggingItemIndex = idx
                         game.drgOffsetX = px - x * GRID_SIZE[0]
                         game.drgOffsetY = py - y * GRID_SIZE[1]
+                        game.drgCornerOffsetX = x * GRID_SIZE[0]
+                        game.drgCornerOffsetY = y * GRID_SIZE[1]
                     elif (STARTBTN_POS[0] -STARTBTN_SIZE[0]/2 <= px <= STARTBTN_POS[0]+STARTBTN_SIZE[0]/2)\
                         and STARTBTN_POS[1] -STARTBTN_SIZE[1]/2 <= py <= STARTBTN_POS[1]+STARTBTN_SIZE[1]/2:
-                        print("in START BTN")
                         cnt = (SECTION_TIME-2)*FPS
                         game.draggingItemIndex=None
                         game.drgOffsetX=0
@@ -409,7 +420,7 @@ async def main():
                         idx = y * BOARD_SIZE[0]+x
                         if 0 <= idx < FULL_CARDS:
                             game.board[game.draggingItemIndex],game.board[idx]=game.board[idx],game.board[game.draggingItemIndex]
-                            if (game.draggingItemIndex -10) * (idx -10) < 0:
+                            if (game.draggingItemIndex -9.5) * (idx -9.5) < 0:
                                 game.this_img[game.board[game.draggingItemIndex]]=pygame.transform.rotate(game.this_img[game.board[game.draggingItemIndex]], 180)
                                 game.this_img[game.board[idx]]=pygame.transform.rotate(game.this_img[game.board[idx]], 180)
                         game.draggingItemIndex = None
@@ -417,14 +428,12 @@ async def main():
                         game.drgCornerOffsetY=0 
                         game.drgOffsetX=0
                         game.drgOffsetY=0
-                        print("drgclear!")
-                    print("drgclear_out!")
             if cnt==0:
                 pass
             elif cnt==SECTION_TIME*FPS:
                 cnt = -1
                 #stage=2
-            game.draw_board(cnt,stage)
+            game.draw_board(cnt,stage,99)
             game.draw_startbtn()
         elif stage==2:
             if cnt%(SECTION_TIME*FPS)==0:
@@ -461,7 +470,7 @@ async def main():
                 game.cpu_atack(read_cnt-1)
                 cnt=(SECTION_TIME-2)*FPS
                 #pygame.mixer.stop()
-            game.draw_board(cnt,stage)
+            game.draw_board(cnt,stage,read_cnt-1)
 
         pygame.display.flip()
         clock.tick(FPS)
