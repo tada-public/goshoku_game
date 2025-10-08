@@ -173,24 +173,6 @@ class Karuta:
         else:
             text=font.render("{}".format(SECTION_TIME-int(cnt/FPS)),True, color_char)            
         screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*6+score_board_sukima))
-        #if(stage==2 and self.char_flag and ith < FULL_CARDS):
-            #font = pygame.font.SysFont('ipaexg.ttc', font_size)
-            #char_rect = pygame.Rect(self.x0+GRID_SIZE[0]*BOARD_SIZE[0]+(BAR_W-font_size)//2, self.y0+SIZE[1]//2-font_size//2, font_size, font_size)
-            #pygame.draw.rect(screen, GREEN, char_rect)
-            #text = font.render(char_waka[self.col*20+self.hand[ith]].split(',')[5][:2], True, 'white')
-            #print(char_waka[self.col*20+self.hand[ith]].split(',')[5][:2])
-            #text_rect = text.get_rect(center=(char_rect[0], char_rect[1]))
-            #screen.blit(text, text_rect)
-            #start_x = 100
-            #start_y = 28
-            #crop_width = 32
-            #crop_height = 64
-            #crop_rect = pygame.Rect(start_x, start_y, crop_width, crop_height)
-            #cropped_image = img[self.col][self.hand[ith]].subsurface(crop_rect)
-            #crop_center = (self.x0+GRID_SIZE[0]*BOARD_SIZE[0]+(BAR_W-font_size)//2, self.y0+SIZE[1]//2-font_size//2, font_size, font_size)
-            #display_x = crop_center[0] - crop_width // 2
-            #display_y = crop_center[1] - crop_height // 2
-            #screen.blit(cropped_image, (display_x, display_y))
 
     def draw_card(self, gridpos, card_id,cnt,stage):
         pos=(self.x0+gridpos[0] * GRID_SIZE[0]+SUKIMA, self.y0+gridpos[1] * GRID_SIZE[1]+SUKIMA)
@@ -488,3 +470,4 @@ async def main():
 
 asyncio.run(main())
     
+
