@@ -61,8 +61,8 @@ for c in range(5):
     for i in range(20):
         img[c].append(pygame.image.load("pic/{}_{}.png".format(c,i)).convert())
 
-infile=open('goshoku8.csv','r',encoding='utf-8')
-char_waka=lines=infile.readlines()
+#infile=open('goshoku8.csv','r',encoding='utf-8')
+#char_waka=lines=infile.readlines()
 background_image = pygame.image.load('pic/noise_image_g.png')  # 画像ファイルのパスを指定
 #bg_width, bg_height = background_image.get_size()  # 背景画像の幅と高さを取得
 #background_scaled = pygame.transform.scale(background_image, SIZE)
@@ -84,7 +84,7 @@ class Karuta:
         self.drgOffsetY=0
         self.drgCornerOffsetX=0
         self.drgCornerOffsetY=0
-        self.char_flag=True
+        self.char_flag=False
         self.cpuscore=0
         self.score=0
         self.obtainedcard=0
@@ -173,14 +173,24 @@ class Karuta:
         else:
             text=font.render("{}".format(SECTION_TIME-int(cnt/FPS)),True, color_char)            
         screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*6+score_board_sukima))
-        if(stage==2 and self.char_flag and ith < FULL_CARDS):
-            font = pygame.font.SysFont('ipaexg.ttc', font_size)
-            char_rect = pygame.Rect(self.x0+GRID_SIZE[0]*BOARD_SIZE[0]+(BAR_W-font_size)//2, self.y0+SIZE[1]//2-font_size//2, font_size, font_size)
-            #pygame.draw.rect(screen, 'green', char_rect)
-            text = font.render(char_waka[self.col*20+self.hand[ith]][5], True, 'white')
-            #print(char_waka[self.col*20+self.hand[ith]][6])
-            text_rect = text.get_rect(center=(char_rect[0], char_rect[1]))
+        #if(stage==2 and self.char_flag and ith < FULL_CARDS):
+            #font = pygame.font.SysFont('ipaexg.ttc', font_size)
+            #char_rect = pygame.Rect(self.x0+GRID_SIZE[0]*BOARD_SIZE[0]+(BAR_W-font_size)//2, self.y0+SIZE[1]//2-font_size//2, font_size, font_size)
+            #pygame.draw.rect(screen, GREEN, char_rect)
+            #text = font.render(char_waka[self.col*20+self.hand[ith]].split(',')[5][:2], True, 'white')
+            #print(char_waka[self.col*20+self.hand[ith]].split(',')[5][:2])
+            #text_rect = text.get_rect(center=(char_rect[0], char_rect[1]))
             #screen.blit(text, text_rect)
+            #start_x = 100
+            #start_y = 28
+            #crop_width = 32
+            #crop_height = 64
+            #crop_rect = pygame.Rect(start_x, start_y, crop_width, crop_height)
+            #cropped_image = img[self.col][self.hand[ith]].subsurface(crop_rect)
+            #crop_center = (self.x0+GRID_SIZE[0]*BOARD_SIZE[0]+(BAR_W-font_size)//2, self.y0+SIZE[1]//2-font_size//2, font_size, font_size)
+            #display_x = crop_center[0] - crop_width // 2
+            #display_y = crop_center[1] - crop_height // 2
+            #screen.blit(cropped_image, (display_x, display_y))
 
     def draw_card(self, gridpos, card_id,cnt,stage):
         pos=(self.x0+gridpos[0] * GRID_SIZE[0]+SUKIMA, self.y0+gridpos[1] * GRID_SIZE[1]+SUKIMA)
@@ -196,39 +206,34 @@ class Karuta:
             screen.blit(hidescr,pos)
 
     def display_result(self):
+        font = pygame.font.SysFont('ipaexg.ttc', FONT_SIZE_RESULT)
         if self.cpuscore !=0:
             if self.obtainedcard > READ_CARDS/2:
                 se_shouri.play()
-                font = pygame.font.Font(None, FONT_SIZE_RESULT)
                 text = font.render("You win!", True, YELLOW)
             else:
                 se_shouri2.play()
-                font = pygame.font.Font(None, FONT_SIZE_RESULT)
                 text = font.render("Try again!", True, YELLOW)
         elif self.score>=1400:
             se_shouri.play()
-            font = pygame.font.Font(None, FONT_SIZE_RESULT)
             text = font.render("Fantastic!!", True, YELLOW)        
         elif self.score>=1300:
             se_shouri2.play()
-            font = pygame.font.Font(None, FONT_SIZE_RESULT)
             text = font.render("Congratulations!", True, YELLOW)
         elif self.score>=1200:
             se_shouri3.play()
-            font = pygame.font.Font(None, FONT_SIZE_RESULT)
             text = font.render("Good Job!", True, YELLOW)
         elif self.score>=1100:
             se_shouri4.play()
-            font = pygame.font.Font(None, FONT_SIZE_RESULT)
             text = font.render("Finish!", True, YELLOW)
         else:
             se_shouri5.play()
-            font = pygame.font.Font(None, FONT_SIZE_RESULT)
             text = font.render("Finish...", True, YELLOW)
         text_rect = text.get_rect(center=(SIZE[0] // 2, SIZE[1] // 2))
         text_rect.move_ip(self.x0, self.y0)
         screen.blit(text, text_rect)
         pygame.display.flip()
+        self.char_flag=False
 
     
     def update(self,x,y,ith,thisscore):
@@ -247,6 +252,7 @@ class Karuta:
     def reset_section(self,ith):
         pygame.mixer.stop()
         se_waka[self.col*20+self.hand[ith]].play()
+        self.char_flag=True
 
     def draw_select_board(self):
         screen.fill(GREEN)
