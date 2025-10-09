@@ -156,7 +156,7 @@ class Karuta:
                 self.move=[0,0,0,0,0]
         font_size=18
         score_board_sukima=10
-        font = pygame.font.Font('ipaexg.ttf', font_size)
+        font = pygame.font.Font(None, font_size)
         text=font.render("SCORE",True, color_char)
         screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+score_board_sukima))
         text=font.render("{}".format(self.score),True, color_char)
@@ -172,12 +172,12 @@ class Karuta:
         else:
             text=font.render("{}".format(SECTION_TIME-int(cnt/FPS)),True, color_char)            
         screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*6+score_board_sukima))
-        if(stage==2 and self.char_flag and self.char_mode_flag and ith < FULL_CARDS and cnt>(FPS//2)):
+        if(stage==2 and self.char_flag and self.char_mode_flag and ith < FULL_CARDS):
             start_x = 0
             start_y = 0
             img_w, img_h =head_img[self.col][self.hand[ith]].get_rect().size
             crop_width = img_w
-            crop_height = min(cnt*(FPS//10)-(FPS//2),img_h)
+            crop_height = min(cnt*(FPS//10),img_h)
             crop_rect = pygame.Rect(start_x, start_y, crop_width, crop_height)
             cropped_image = head_img[self.col][self.hand[ith]].subsurface(crop_rect)
             crop_center = (self.x0+GRID_SIZE[0]*BOARD_SIZE[0]+BAR_W//2, self.y0+SIZE[1]//2-font_size//2, font_size, font_size)
@@ -199,7 +199,7 @@ class Karuta:
             screen.blit(hidescr,pos)
 
     def display_result(self):
-        font = pygame.font.Font('ipaexg.ttf', FONT_SIZE_RESULT)
+        font = pygame.font.Font(None, FONT_SIZE_RESULT)
         if self.cpuscore !=0:
             if self.obtainedcard > READ_CARDS/2:
                 se_shouri.play()
@@ -251,7 +251,7 @@ class Karuta:
         screen.fill(GREEN)
         screen.blit(background_image, (self.x0, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
         font_size=24
-        font = pygame.font.Font('ipaexg.ttf', font_size)
+        font = pygame.font.Font(None, font_size)
         for i in range(BOARD_SIZE[0]*1):
             gridpos=(i%BOARD_SIZE[0],1)
             pos=(self.x0+gridpos[0] * GRID_SIZE[0], self.y0+gridpos[1] * GRID_SIZE[1])
@@ -283,7 +283,7 @@ class Karuta:
             color_char_on='red'
         box_size=16
         border_w=1
-        small_font = pygame.font.Font('ipaexg.ttf', box_size)
+        small_font = pygame.font.Font(None, box_size)
         char_box_x=self.x0+GRID_SIZE[0]*4+box_size
         char_box_y=self.y0+int(GRID_SIZE[1]*2.5)+box_size
         self.char_rect_off = pygame.Rect(char_box_x, char_box_y+box_size, box_size, box_size)
@@ -358,7 +358,7 @@ class Karuta:
         self.x0=int((w-SIZE[0])/2)
         self.y0=int((h-SIZE[1])/2)
     def draw_startbtn(self):
-        font = pygame.font.Font('ipaexg.ttf', 18)
+        font = pygame.font.Font(None, 18)
         x, y = GRID_SIZE[0]*BOARD_SIZE[0]+BAR_W//2, GRID_SIZE[1]*BOARD_SIZE[1]-BAR_W # ボタンの中心座標
         w, h = 80, 60   # ボタンの幅と高さ
         button_color = 'azure1'
