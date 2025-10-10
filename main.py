@@ -493,7 +493,7 @@ class Karuta:
 def show_loading_screen():
     font = pygame.font.Font(None, 24)
     screen.blit(background_image, (0, 0), (0, 0, SIZE[0], SIZE[1]))
-    text = font.render("Goshoku Hyakunin Isshu       Loading...", True, (255, 255, 255))
+    text = font.render("Goshoku Hyakunin Isshu       Loading ver 0.1...", True, (255, 255, 255))
     screen.blit(text, (SIZE[0] // 2 - text.get_width() // 2, SIZE[1] // 2 - text.get_height() // 2))
     pygame.display.flip()
 async def main():
@@ -659,4 +659,5 @@ async def main():
 
 asyncio.run(main())
     
+
 
