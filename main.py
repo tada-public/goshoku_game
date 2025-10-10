@@ -507,6 +507,7 @@ async def main():
     temporary_cpu_score=0
     while running:
         game.sizecheck()
+        pygame.event.pump()
         if stage==0:
             if cnt%(SECTION_TIME_SELECT*FPS)==0:
                 game.reset_section_select()
@@ -658,3 +659,4 @@ async def main():
 
 asyncio.run(main())
     
+
