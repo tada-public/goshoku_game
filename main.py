@@ -36,17 +36,16 @@ SLIDER_HEIGHT = 10
 SLIDER_POS = (int(GRID_SIZE[0]*1), int(GRID_SIZE[1]*3)+50)  # スライダーのバーの左上座標
 KNOB_RADIUS = 10
 
-colors=["あお","ぴんく","きー","みどり","おれんじ"]
-colors_kanji=["青札","桃札","黄札","緑札","橙札"]
-colors_eng=["BLUE","PINK","YELLOW","GREEN","ORANGE"]
-colors_code=["#33CCFF","#FF99CC","#FFCC00","#33CC66","#FF9933"]
-colors_code_V85=["#2badd9","#d982ad","#d9ad00","#2bad57","#d9822b"]
-colors_code_S30=["#c2f0ff","#ffe0f0","#fff0b3","#c7ffda","#ffe0c2"]
+#colors=["あお","ぴんく","きー","みどり","おれんじ"]
+#colors_kanji=["青札","桃札","黄札","緑札","橙札"]
+#colors_eng=["BLUE","PINK","YELLOW","GREEN","ORANGE"]
+#colors_code=["#33CCFF","#FF99CC","#FFCC00","#33CC66","#FF9933"]
+#colors_code_V85=["#2badd9","#d982ad","#d9ad00","#2bad57","#d9822b"]
+#colors_code_S30=["#c2f0ff","#ffe0f0","#fff0b3","#c7ffda","#ffe0c2"]
 colors_code_S30_alpha=[(194,240,255),(255,224,240),(255,240,179),(199,255,218),(255,224,194)]
 color_char=(250,250,250)
 pygame.init()
 pygame.mixer.init()
-volume=0.7
 screen = pygame.display.set_mode(SIZE,pygame.RESIZABLE)
 pygame.display.set_caption("Goshoku_Hyakunin_Isshu")
 clock = pygame.time.Clock()
@@ -114,7 +113,6 @@ class Karuta:
         self.hand=h
         self.gamesize=(SIZE[0],SIZE[1])
         self.invisible_flag=0
-        self.draggingflag=False
         self.draggingItemIndex=None
         self.drgOffsetX=0
         self.drgOffsetY=0
@@ -454,8 +452,8 @@ class Karuta:
 
     def draw_startbtn(self):
         font = pygame.font.Font(None, 24)
-        x, y = GRID_SIZE[0]*BOARD_SIZE[0]+BAR_W//2, GRID_SIZE[1]*BOARD_SIZE[1]-BAR_W # ボタンの中心座標
-        w, h = 80, 60   # ボタンの幅と高さ
+        x, y = STARTBTN_POS[0], STARTBTN_POS[1] # ボタンの中心座標
+        w, h = STARTBTN_SIZE[0],STARTBTN_SIZE[1]   # ボタンの幅と高さ
         button_color = 'azure1'
         button_color_edge = 'azure3'
         text_color = 'darkgreen'
@@ -493,7 +491,7 @@ class Karuta:
 def show_loading_screen():
     font = pygame.font.Font(None, 24)
     screen.blit(background_image, (0, 0), (0, 0, SIZE[0], SIZE[1]))
-    text = font.render("Goshoku Hyakunin Isshu       Loading ver 0.2...", True, (255, 255, 255))
+    text = font.render("Goshoku Hyakunin Isshu ver. 0.3       Loading...", True, (255, 255, 255))
     screen.blit(text, (SIZE[0] // 2 - text.get_width() // 2, SIZE[1] // 2 - text.get_height() // 2))
     pygame.display.flip()
 async def main():
@@ -504,7 +502,6 @@ async def main():
     cnt=0
     read_cnt=0
     stage=0
-    temporary_cpu_score=0
     while running:
         game.sizecheck()
         pygame.event.pump()
@@ -645,9 +642,7 @@ async def main():
                             cnt=(SECTION_TIME-2)*FPS
             if game.cpuscore!=0 and cnt==game.cpuframes[read_cnt-1] and game.card_rect[game.hand[read_cnt-1]] is not None:
                 game.cpu_atack(read_cnt-1)
-                temporary_cpu_score+=100-int(100/(SECTION_TIME*FPS)*cnt)
                 cnt=(SECTION_TIME-2)*FPS
-                #print(temporary_cpu_score)
             game.draw_board(cnt,stage,read_cnt-1)
         pygame.display.flip()
         clock.tick(FPS)
@@ -656,10 +651,15 @@ async def main():
     pygame.quit()
     sys.exit()
 
-
-asyncio.run(main())
-    
-
-
-
-
+#asyncio.run(main())
+if __name__ == "__main__": # 二重ループを起こさないように変更
+    try:
+        asyncio.run(main())
+    except RuntimeError as e:
+        # In some environments, an event loop might already be running.
+        # This handles such cases.
+        if "cannot run loop while another loop is running" in str(e):
+            loop = asyncio.get_event_loop()
+            loop.create_task(main())
+        else:
+            raise
