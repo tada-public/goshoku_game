@@ -6,7 +6,7 @@ from PIL import Image
 GREEN = (0, 128, 0)
 YELLOW = (255, 155, 0)
 BOARD_SIZE=(5,4)
-GRID_SIZE=(165,220)
+GRID_SIZE=(155,210)
 CARD_SIZE=(145,200)
 HEAD_SIZE=(52,210)
 FULL_CARDS=BOARD_SIZE[0]*BOARD_SIZE[1]
@@ -659,5 +659,6 @@ async def main():
 
 asyncio.run(main())
     
+
 
 
