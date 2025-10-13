@@ -30,7 +30,7 @@ STARTBTN_POS=[GRID_SIZE[0]*BOARD_SIZE[0]+BAR_W//2, GRID_SIZE[1]*BOARD_SIZE[1]-BA
 STARTBTN_SIZE=[80, 60]
 SLIDER_MIN_VALUE = 600# スライダー設定
 SLIDER_MAX_VALUE = 1500# スライダー設定
-SLIDER_STEP = 100# スライダー設定
+SLIDER_STEP = 50# スライダー設定
 SLIDER_WIDTH = 300
 SLIDER_HEIGHT = 10
 SLIDER_POS = (int(GRID_SIZE[0]*1), int(GRID_SIZE[1]*3)+50)  # スライダーのバーの左上座標
@@ -663,4 +663,5 @@ if __name__ == "__main__": # 二重ループを起こさないように変更
             loop.create_task(main())
         else:
             raise
+
 
