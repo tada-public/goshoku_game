@@ -378,7 +378,7 @@ class Karuta:
             else:
                 thiscolor=self.color_2
                 thisith=self.hand[ith]-20
-        if 0 <= thisith < 20:
+        if not(0 <= thisith < 20):
             return False
         start_x = 0
         start_y = 0
