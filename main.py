@@ -146,8 +146,8 @@ class Karuta:
             for i in range(20):
                 se_waka.append(pygame.mixer.Sound("ogg/{}_{}.ogg".format(c,i)))
         COMBINED_CARD_PATH = 'pic/cards.png'
-        COMBINED_HEAD_PATH = 'pic/combined_heads.png'
-        COMBINED_HEADH_PATH = 'pic/combined_headsh.png'
+        COMBINED_HEAD_PATH = 'pic/heads.png'
+        COMBINED_HEADH_PATH = 'pic/headsh.png'
         NUM_SETS = 5
         combined_card_img = Image.open(COMBINED_CARD_PATH).convert("RGBA")
         combined_head_img = Image.open(COMBINED_HEAD_PATH).convert("RGBA")
