@@ -119,6 +119,8 @@ class Karuta:
         self.finish_flag=False
         self.color_prepared=False
         self.currentobtained=0
+        self.currentfanfale=None
+        self.result_text=None
 
     def initialize(self):
         pygame.init()
@@ -225,8 +227,14 @@ class Karuta:
         x_id, y_id = self.card_rect[self.hand[ith]].center
         x_id //= GRID_SIZE[0]
         y_id //= GRID_SIZE[1]
-        self.move=[x_id,y_id,ith,MOVE_FRAME,0]
+        self.move=[x_id,y_id,self.hand[ith],MOVE_FRAME,0]
         self.card_rect[self.hand[ith]] = None
+        if self.double_mode_flag and self.color==self.color_2:
+            x_id, y_id = self.card_rect[self.hand[ith]+20].center
+            x_id //= GRID_SIZE[0]
+            y_id //= GRID_SIZE[1]
+            self.move=[x_id,y_id,self.hand[ith]+20,MOVE_FRAME,0]
+            self.card_rect[self.hand[ith]+20] = None            
 
     def draw_board(self,cnt,stage):
         if(cnt<0):
@@ -249,7 +257,7 @@ class Karuta:
                 temp_pos=(self.x0+self.move[0]*GRID_SIZE[0]+SUKIMA,self.y0+self.move[1]*GRID_SIZE[1]+SUKIMA)
                 pos=(temp_pos[0]-(temp_pos[0]-int(self.gamesize[0]/2))/MOVE_FRAME*(MOVE_FRAME-self.move[3]+1),\
                      temp_pos[1]-(temp_pos[1]-self.gamesize[1]*self.move[4])/MOVE_FRAME*(MOVE_FRAME-self.move[3]+1))
-                self.screen.blit(self.rotated_img[self.hand[self.move[2]]], pos)
+                self.screen.blit(self.rotated_img[self.move[2]], pos)
                 self.move[3]-=1
             elif self.move[3]:
                 self.moveflag=False
@@ -305,7 +313,9 @@ class Karuta:
         text=font.render(currenttext_l,True, color_char)
         self.screen.blit(text, (self.x0+score_board_sukima, self.y0+GRID_SIZE[1]*BOARD_SIZE[1]+score_board_sukima+font_size))
         text=font.render(currenttext_r,True, color_char)
-        self.screen.blit(text, (self.x0_2+score_board_sukima, self.y0+GRID_SIZE[1]*BOARD_SIZE[1]+score_board_sukima+font_size))
+        #self.screen.blit(text, (self.x0_2+score_board_sukima, self.y0+GRID_SIZE[1]*BOARD_SIZE[1]+score_board_sukima+font_size))
+        #print(f"{text.get_rect()}, {text.get_rect()[3]}")
+        self.screen.blit(text, (self.x0_2+GRID_SIZE[0]*BOARD_SIZE[0]-(score_board_sukima+text.get_rect()[2]+200), self.y0+GRID_SIZE[1]*BOARD_SIZE[1]+score_board_sukima+font_size))
 
     def draw_dist_info(self):
         font_size=24
@@ -368,6 +378,8 @@ class Karuta:
             else:
                 thiscolor=self.color_2
                 thisith=self.hand[ith]-20
+        if 0 <= thisith < 20:
+            return False
         start_x = 0
         start_y = 0
         img_w, img_h =headh_img[thiscolor][thisith].get_rect().size
@@ -375,7 +387,7 @@ class Karuta:
         crop_height = img_h
         crop_rect = pygame.Rect(start_x, start_y, crop_width, crop_height)
         cropped_image = headh_img[thiscolor][thisith].subsurface(crop_rect)
-        crop_center = (self.x0+BAR_W*4, self.y0+SIZE[1]+BAR_H//2, font_size, font_size)
+        crop_center = (self.x0+GRID_SIZE[0]*4+40, self.y0+SIZE[1]+BAR_H//2, font_size, font_size)
         display_x = crop_center[0]
         display_y = crop_center[1] - crop_height // 2
         self.screen.blit(cropped_image, (display_x, display_y))
@@ -402,32 +414,35 @@ class Karuta:
             hidescr_rect=hidescr.get_rect(center=pos)
             self.screen.blit(hidescr, hidescr_rect.topleft)
 
-    def display_result(self):
+    def set_result(self):
         maxscore=max(self.score,self.score_2)
         winscore=17//2
-        font = pygame.font.Font(None, FONT_SIZE_RESULT)
         if self.cpuscore !=0:
             if self.obtainedcard > winscore or self.obtainedcard_2 > winscore:
-                se["shouri"].play()
-                text = font.render("You win!", True, YELLOW)
+                self.currentfanfale=se["shouri"]
+                self.result_text = "You win!"
             else:
-                se["shouri2"].play()
-                text = font.render("Try again!", True, YELLOW)
+                self.currentfanfale=se["shouri2"]
+                self.result_text = "Try again!"
         elif maxscore>=1400:
-            se["shouri"].play()
-            text = font.render("Fantastic!!", True, YELLOW)        
+            self.currentfanfale=se["shouri"]
+            self.result_text = "Fantastic!!"        
         elif maxscore>=1300:
-            se["shouri2"].play()
-            text = font.render("Congratulations!", True, YELLOW)
+            self.currentfanfale=se["shouri2"]
+            self.result_text = "Congratulations!"
         elif maxscore>=1200:
-            se["shouri3"].play()
-            text = font.render("Good Job!", True, YELLOW)
+            self.currentfanfale=se["shouri3"]
+            self.result_text = "Good Job!"
         elif maxscore>=1100:
-            se["shouri4"].play()
-            text = font.render("Finish!", True, YELLOW)
+            self.currentfanfale=se["shouri4"]
+            self.result_text = "Finish!"
         else:
-            se["shouri5"].play()
-            text = font.render("Finish...", True, YELLOW)
+            self.currentfanfale=se["shouri5"]
+            self.result_text = "Finish..."
+
+    def display_result(self):
+        font = pygame.font.Font(None, FONT_SIZE_RESULT)
+        text = font.render(self.result_text, True, YELLOW)
         cx, cy =SIZE[0] // 2, SIZE[1] // 2
         if self.double_mode_flag:
             cx, cy =SIZE[0], SIZE[1] // 2            
@@ -472,7 +487,7 @@ class Karuta:
             x_id, y_id = self.card_rect[getcard].center
             x_id //= GRID_SIZE[0]
             y_id //= GRID_SIZE[1]
-            self.move=[x_id,y_id,ith,MOVE_FRAME,1]
+            self.move=[x_id,y_id,getcard,MOVE_FRAME,1]
             self.card_rect[getcard] = None
             return True
         else:
@@ -866,6 +881,8 @@ async def main():
                 allobtained=False
                 if read_cnt+1 >= game.read_cards:
                     game.finish_flag=True
+                    cnt=-1
+                    game.set_result()
                     stage=3
                 else:
                     read_cnt += 1
@@ -917,8 +934,10 @@ async def main():
                         game.draw_board_char_2(cnt,read_cnt)
         if stage==3:
             #game.display_result()
-            cnt=(SECTION_TIME-2)*FPS
             game.draw_board_result()
+            if cnt%SECTION_TIME_RESULT*FPS==0:
+                game.currentfanfale.play()
+                cnt=0
             #if not game.double_mode_flag:
             #    game.draw_board_text(cnt)
             #else:
