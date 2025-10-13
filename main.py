@@ -162,7 +162,7 @@ class Karuta:
                 self.cpuframes[i%READ_CARDS]+=err/abs(err) #-1 or 1
         tiltfunc=[0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.6,-0.7,-0.8]
         for i in range(READ_CARDS):
-            self.cpuframes[i]+int(tiltfunc[i]*FPS)
+            self.cpuframes[i]+=int(tiltfunc[i]*FPS)
 
     def cpu_atack(self,ith):
         se["atack"].play()
@@ -663,3 +663,4 @@ if __name__ == "__main__": # 二重ループを起こさないように変更
             loop.create_task(main())
         else:
             raise
+
