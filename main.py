@@ -951,8 +951,8 @@ async def main():
                         cnt=0
                         read_cnt=0
                         stage=0
-                        pygame.mixer.stop()
-                        se["maru"].play()
+                        #pygame.mixer.stop()
+                        #se["maru"].play()
                         game = Karuta()
                         game.initialize()
                         continue
@@ -975,6 +975,7 @@ if __name__ == "__main__": # 二重ループを起こさないように変更
             loop.create_task(main())
         else:
             raise
+
 
 
 
