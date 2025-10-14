@@ -883,7 +883,6 @@ async def main():
                     game.finish_flag=True
                     cnt=-1
                     game.set_result()
-                    pygame.mixer.stop()
                     stage=3
                 else:
                     read_cnt += 1
@@ -976,5 +975,6 @@ if __name__ == "__main__": # 二重ループを起こさないように変更
             loop.create_task(main())
         else:
             raise
+
 
 
