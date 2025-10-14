@@ -917,6 +917,7 @@ async def main():
                         elif game.currentobtained==1:
                                 allobtained=True
                         if allobtained:
+                            pygame.mixer.stop()
                             cnt=(SECTION_TIME-2)*FPS
             if game.cpuscore!=0 and cnt==game.cpuframes[read_cnt] and game.card_rect[game.hand[read_cnt]] is not None:
                 game.cpu_atack(read_cnt)
@@ -951,6 +952,7 @@ async def main():
                         cnt=0
                         read_cnt=0
                         stage=0
+                        pygame.mixer.stop()
                         game = Karuta()
                         game.initialize()
                         continue
@@ -973,3 +975,4 @@ if __name__ == "__main__": # 二重ループを起こさないように変更
             loop.create_task(main())
         else:
             raise
+
