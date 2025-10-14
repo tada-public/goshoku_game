@@ -289,6 +289,9 @@ class Karuta:
                 right_edge = left_edge + GRID_SIZE[0] * BOARD_SIZE[0]
                 top_edge = self.y0
                 bottom_edge = top_edge + GRID_SIZE[1] * BOARD_SIZE[1]
+                if self.color_2 is not None and self.color != self.color_2:
+                    left_edge = self.x0
+                    right_edge = self.x0+GRID_SIZE[0] * BOARD_SIZE[0]*2
                 if self.card_rect[ii] is not None:
                     self.card_rect[ii].x += self.wander_ang[ii][0]
                     self.card_rect[ii].y += self.wander_ang[ii][1]
