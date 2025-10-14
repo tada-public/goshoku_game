@@ -350,14 +350,14 @@ class Karuta:
         score_board_sukima=10
         font = pygame.font.Font(None, font_size)
         if not self.double_mode_flag:
-            text=font.render("Arrenge",True, color_char)
+            text=font.render("Arrange",True, color_char)
             self.screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+score_board_sukima))
             text=font.render("the cards",True, color_char)
             self.screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size+score_board_sukima))
             text=font.render("as you like",True, color_char)
             self.screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*2+score_board_sukima))
         else:
-            text=font.render("Arrenge the cards as you like",True, color_char)
+            text=font.render("Arrange the cards as you like",True, color_char)
             self.screen.blit(text, (self.x0+score_board_sukima, self.y0+GRID_SIZE[1]*BOARD_SIZE[1]+score_board_sukima))
 
     def draw_startbtn(self,stage):
@@ -985,7 +985,9 @@ async def main():
             #game.display_result()
             game.draw_board_result()
             if cnt%SECTION_TIME_RESULT*FPS==0:
-                game.currentfanfale.play()
+                if game.finish_flag:
+                    game.currentfanfale.play()
+                    game.finish_flag=False
                 cnt=0
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
