@@ -105,15 +105,36 @@ class Karuta:
         self.rotated_img=[None]*FULL_CARDS*2
         self.title_card_rect=[None]*BOARD_SIZE[0]
         self.wander_mode_flag=False
-        ang=[[20,0],[19,6],[16,11],[11,16],[6,19],\
-             [0,20],[-7,19],[-12,16],[-17,11],[-20,6],\
-             [-20,0],[-20,-7],[-17,-12],[-12,-17],[-7,-20],\
-             [-1,-20],[6,-20],[11,-17],[16,-12],[19,-7],]
-        random.shuffle(ang)
-        ang1 = ang
-        random.shuffle(ang)
-        ang2 = ang
-        self.wander_ang = ang1+ang2
+        cos_values = [1.00, 0.98, 0.94, 0.87, 0.77, 0.64, 0.50, 0.34, 0.17, 0.00,
+                        -0.17, -0.34, -0.50, -0.64, -0.77, -0.87, -0.94, -0.98, -1.00, -0.98,
+                        -0.94, -0.87, -0.77, -0.64, -0.50, -0.34, -0.17, 0.00, 0.17, 0.34,
+                        0.50, 0.64, 0.77, 0.87, 0.94, 0.98]
+        sin_values = [0.00, 0.17, 0.34, 0.50, 0.64, 0.77, 0.87, 0.94, 0.98, 1.00,
+                        0.98, 0.94, 0.87, 0.77, 0.64, 0.50, 0.34, 0.17, 0.00, -0.17,
+                        -0.34, -0.50, -0.64, -0.77, -0.87, -0.94, -0.98, -1.00, -0.98, -0.94,
+                        -0.87, -0.77, -0.64, -0.50, -0.34, -0.17]
+        points = []
+        radius = 6  # 半径
+        ang0 = 9  # 初期角度
+        for i in range(20):
+            angle_deg = ang0 + i * 18
+            angle_deg = angle_deg % 360
+            index = angle_deg // 10
+            cos_value = cos_values[index]
+            sin_value = sin_values[index]
+            x = radius * cos_value
+            y = radius * sin_value
+            if 0<= x < 1:
+                x = 1
+            elif -1< x < 0:
+                x = -1
+            if 0<= y < 1:
+                y = 1
+            elif -1< y < 0:
+                y = -1
+            points.append([x, y])
+        random.shuffle(points)
+        self.wander_ang = points+points
         self.screen=None
         self.clock=None
         self.finish_flag=False
@@ -264,25 +285,29 @@ class Karuta:
                 self.move=[0,0,0,0,0]
         if(stage==2 and self.wander_mode_flag):
             for ii in range(card_num):
-                left_edge = self.x0 if ii<20 else self.x0_2
-                right_edge = self.x0+GRID_SIZE[0]*BOARD_SIZE[0] if ii<20 else self.x0_2+GRID_SIZE[0]*BOARD_SIZE[0]
+                left_edge = self.x0 if ii < 20 else self.x0_2
+                right_edge = left_edge + GRID_SIZE[0] * BOARD_SIZE[0]
                 top_edge = self.y0
-                bottom_edge = self.y0+GRID_SIZE[1]*BOARD_SIZE[1]
+                bottom_edge = top_edge + GRID_SIZE[1] * BOARD_SIZE[1]
                 if self.card_rect[ii] is not None:
-                    self.card_rect[ii].x+=self.wander_ang[ii][0]//4
-                    self.card_rect[ii].y+=self.wander_ang[ii][1]//4
+                    self.card_rect[ii].x += self.wander_ang[ii][0]
+                    self.card_rect[ii].y += self.wander_ang[ii][1]
                     if self.card_rect[ii].left < left_edge:
-                        self.card_rect[ii].left=left_edge
-                        self.wander_ang[ii][0]*=-1
+                        self.card_rect[ii].left = left_edge
+                        self.wander_ang[ii][0] *= -1 
+                        self.card_rect[ii].x += self.wander_ang[ii][0]
                     elif self.card_rect[ii].right > right_edge:
-                        self.card_rect[ii].right=right_edge
-                        self.wander_ang[ii][0]*=-1
+                        self.card_rect[ii].right = right_edge
+                        self.wander_ang[ii][0] *= -1 
+                        self.card_rect[ii].x += self.wander_ang[ii][0]
                     if self.card_rect[ii].top < top_edge:
-                        self.card_rect[ii].top=top_edge
-                        self.wander_ang[ii][1]*=-1
+                        self.card_rect[ii].top = top_edge
+                        self.wander_ang[ii][1] *= -1 
+                        self.card_rect[ii].y += self.wander_ang[ii][1]
                     elif self.card_rect[ii].bottom > bottom_edge:
-                        self.card_rect[ii].bottom=bottom_edge
-                        self.wander_ang[ii][1]*=-1
+                        self.card_rect[ii].bottom = bottom_edge
+                        self.wander_ang[ii][1] *= -1 
+                        self.card_rect[ii].y += self.wander_ang[ii][1]
 
     def draw_board_text(self,cnt):
         font_size=24
@@ -354,23 +379,40 @@ class Karuta:
         self.screen.blit(text, text_rect)
 
     def draw_board_char(self,cnt,ith):
+        if cnt <= 0:
+            print("cnt<=0 in draw_board_char")
+            return False
         font_size=24
         start_x = 0
         start_y = 0
+        if head_img[self.color][self.hand[ith]] is None:
+            print(f"head_img is None in draw_board_char, ith:{ith}, hand[ith]:{self.hand[ith]}")
+            return False
         img_w, img_h =head_img[self.color][self.hand[ith]].get_rect().size
         crop_width = img_w
         crop_height = min(cnt*(FPS//10)*2,img_h)
+        if img_h <=0:
+            print(f"img_h <=0, img_h:{img_h}, ith:{ith}, hand[ith]:{self.hand[ith]}")
+            return False
         crop_rect = pygame.Rect(start_x, start_y, crop_width, crop_height)
-        cropped_image = head_img[self.color][self.hand[ith]].subsurface(crop_rect)
+        try:
+            cropped_image = head_img[self.color][self.hand[ith]].subsurface(crop_rect)
+        except Exception as e:
+            print(f"err, crop_width:{crop_width},crop_height:{crop_height} ith:{ith}, hand[ith]:{self.hand[ith]}: {e}")
         crop_center = (self.x0+GRID_SIZE[0]*BOARD_SIZE[0]+BAR_W//2, self.y0+SIZE[1]//2-font_size//2, font_size, font_size)
         display_x = crop_center[0] - crop_width // 2
         display_y = crop_center[1]
         self.screen.blit(cropped_image, (display_x, display_y))
 
     def draw_board_char_2(self,cnt,ith):
+        if cnt <= 0:
+            print("cnt<=0 in draw_board_char_2")
+            return False
         font_size=24
         thiscolor=self.color
         thisith=self.hand[ith]
+        start_x = 0
+        start_y = 0
         if self.color_2 is not None and self.color != self.color_2:
             if ith%2==0:
                 thiscolor=self.color
@@ -379,9 +421,11 @@ class Karuta:
                 thiscolor=self.color_2
                 thisith=self.hand[ith]-20
         if not(0 <= thisith < 20):
+            print("thisith is out of range in draw_board_char_2")
             return False
-        start_x = 0
-        start_y = 0
+        elif headh_img[thiscolor][thisith] is None:
+            print("headh_img is None in draw_board_char_2, ith:{ith}, hand[ith]:{self.hand[ith]}")
+            return False
         img_w, img_h =headh_img[thiscolor][thisith].get_rect().size
         crop_width = min(cnt*(FPS//10)*2,img_w)
         crop_height = img_h
@@ -454,7 +498,7 @@ class Karuta:
     
     def update(self,x,y,ith,thisscore):
         getcard=None
-        print(f"ith:{ith}, self.hand[ith]:{self.hand[ith]}")
+        #print(f"ith:{ith}, self.hand[ith]:{self.hand[ith]}")
         if self.color_2 is None:
             if self.card_rect[self.hand[ith]].collidepoint(x, y):
                 getcard=self.hand[ith]
@@ -472,7 +516,7 @@ class Karuta:
                     self.obtainedcard_2+=1
                     self.score_2+=thisscore
         elif self.color_2 is not None and self.color!=self.color_2:
-            print(f"rect:{self.card_rect[self.hand[ith]]}")
+            #print(f"rect:{self.card_rect[self.hand[ith]]}")
             if self.card_rect[self.hand[ith]].collidepoint(x, y):
                 getcard=self.hand[ith]
                 if getcard<20:
@@ -883,6 +927,7 @@ async def main():
                     game.finish_flag=True
                     cnt=-1
                     game.set_result()
+                    pygame.mixer.stop()
                     stage=3
                 else:
                     read_cnt += 1
@@ -926,6 +971,7 @@ async def main():
                 game.draw_board_text(cnt)
                 if game.char_mode_flag:
                     if read_cnt>=0:
+                        #print(f"{read_cnt}")
                         game.draw_board_char(cnt,read_cnt)
             else:
                 game.draw_board_text_2(cnt)
@@ -938,10 +984,6 @@ async def main():
             if cnt%SECTION_TIME_RESULT*FPS==0:
                 game.currentfanfale.play()
                 cnt=0
-            #if not game.double_mode_flag:
-            #    game.draw_board_text(cnt)
-            #else:
-            #    game.draw_board_text_2(cnt)                
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -951,8 +993,8 @@ async def main():
                         cnt=0
                         read_cnt=0
                         stage=0
-                        #pygame.mixer.stop()
-                        #se["maru"].play()
+                        pygame.mixer.stop()
+                        se["maru"].play()
                         game = Karuta()
                         game.initialize()
                         continue
@@ -975,7 +1017,3 @@ if __name__ == "__main__": # 二重ループを起こさないように変更
             loop.create_task(main())
         else:
             raise
-
-
-
-
