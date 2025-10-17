@@ -17,6 +17,7 @@ BAR_W=100
 BAR_H=60
 SIZE = (GRID_SIZE[0]*BOARD_SIZE[0],GRID_SIZE[1]*BOARD_SIZE[1])
 FPS=30
+INFO_RECT_CAND=[(GRID_SIZE[0]*BOARD_SIZE[0], 0, BAR_W, GRID_SIZE[1]*BOARD_SIZE[1]),(0,GRID_SIZE[1]*BOARD_SIZE[1], GRID_SIZE[0]*BOARD_SIZE[0]*2, BAR_H)]
 SECTION_TIME=10 #sec
 SECTION_TIME_SELECT=30 #sec
 SECTION_TIME_RESULT=20 #sec
@@ -101,6 +102,7 @@ class Karuta:
         self.x0=0
         self.x0_2=GRID_SIZE[0]*BOARD_SIZE[0]
         self.y0=0
+        self.info_rect=None
         self.card_rect=[None]*FULL_CARDS*2
         self.rotated_img=[None]*FULL_CARDS*2
         self.title_card_rect=[None]*BOARD_SIZE[0]
@@ -143,6 +145,7 @@ class Karuta:
         self.currentfanfale=None
         self.result_text=None
         self.draftsc=None
+        self.cpu_get_score=0
 
     def initialize(self):
         pygame.init()
@@ -244,7 +247,7 @@ class Karuta:
                 self.cpuframes.append(temp_list[i])
                 self.cpuframes.append(temp_list[i])
 
-    def cpu_atack(self,ith):
+    def cpu_atack(self,ith,thisscore):
         se["atack"].play()
         self.moveflag=True
         x_id, y_id = self.card_rect[self.hand[ith]].center
@@ -252,6 +255,8 @@ class Karuta:
         y_id //= GRID_SIZE[1]
         self.move=[x_id,y_id,self.hand[ith],MOVE_FRAME,0]
         self.card_rect[self.hand[ith]] = None
+        self.cpu_get_score += thisscore
+        print(f"cpuscore:{self.cpu_get_score}")
         if self.double_mode_flag and self.color==self.color_2:
             x_id, y_id = self.card_rect[self.hand[ith]+20].center
             x_id //= GRID_SIZE[0]
@@ -262,16 +267,23 @@ class Karuta:
     def draw_board(self,cnt,stage):
         if(cnt<0):
             cnt=0
-        self.draftsc.fill(DARKGRAY)
+        #self.draftsc.fill(DARKGRAY)
+        pygame.draw.rect(self.draftsc, DARKGRAY, self.info_rect)
         self.draftsc.blit(background_image_g, (self.x0, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
         card_num=FULL_CARDS
         if self.double_mode_flag:
             self.draftsc.blit(background_image_y, (self.x0_2, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
             card_num=FULL_CARDS*2
+        self.x0=0
+        self.x0_2=GRID_SIZE[0]*BOARD_SIZE[0]
+        self.y0=0
         if(stage==2 and self.wander_mode_flag):
             for ii in range(card_num):
                 if self.card_rect[ii] is not None:
-                    left_edge = self.x0 if ii < 20 else self.x0_2
+                    if ii < 20:
+                        left_edge = self.x0
+                    else:
+                        left_edge = self.x0_2
                     right_edge = left_edge+GRID_SIZE[0]*BOARD_SIZE[0]
                     top_edge = self.y0
                     bottom_edge = top_edge+GRID_SIZE[1]*BOARD_SIZE[1]
@@ -385,19 +397,19 @@ class Karuta:
 
     def draw_board_char(self,cnt,ith):
         if cnt <= 0:
-            print("cnt<=0 in draw_board_char")
+            #print("cnt<=0 in draw_board_char")
             return False
         font_size=24
         start_x = 0
         start_y = 0
         if head_img[self.color][self.hand[ith]] is None:
-            print(f"head_img is None in draw_board_char, ith:{ith}, hand[ith]:{self.hand[ith]}")
+            #print(f"head_img is None in draw_board_char, ith:{ith}, hand[ith]:{self.hand[ith]}")
             return False
         img_w, img_h =head_img[self.color][self.hand[ith]].get_rect().size
         crop_width = img_w
         crop_height = min(cnt*(FPS//10)*2,img_h)
         if img_h <=0:
-            print(f"img_h <=0, img_h:{img_h}, ith:{ith}, hand[ith]:{self.hand[ith]}")
+            #print(f"img_h <=0, img_h:{img_h}, ith:{ith}, hand[ith]:{self.hand[ith]}")
             return False
         crop_rect = pygame.Rect(start_x, start_y, crop_width, crop_height)
         try:
@@ -411,7 +423,7 @@ class Karuta:
 
     def draw_board_char_2(self,cnt,ith):
         if cnt <= 0:
-            print("cnt<=0 in draw_board_char_2")
+            #print("cnt<=0 in draw_board_char_2")
             return False
         font_size=24
         thiscolor=self.color
@@ -426,7 +438,7 @@ class Karuta:
                 thiscolor=self.color_2
                 thisith=self.hand[ith]-20
         if not(0 <= thisith < 20):
-            print("thisith is out of range in draw_board_char_2")
+            #print("thisith is out of range in draw_board_char_2")
             return False
         elif headh_img[thiscolor][thisith] is None:
             print("headh_img is None in draw_board_char_2, ith:{ith}, hand[ith]:{self.hand[ith]}")
@@ -552,7 +564,8 @@ class Karuta:
         self.char_flag=True
 
     def draw_select_board(self):
-        self.draftsc.fill(DARKGRAY)
+        #self.draftsc.fill(DARKGRAY)
+        #pygame.draw.rect(self.draftsc, DARKGRAY, self.info_rect)
         self.draftsc.blit(background_image_g, (self.x0, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
         font_size=32
         font = pygame.font.Font(None, font_size)
@@ -794,7 +807,7 @@ async def main():
     read_cnt=0
     stage=0
     while running:
-        game.sizecheck()
+        #game.sizecheck()
         pygame.event.pump()
         if stage==0:
             if cnt%(SECTION_TIME_SELECT*FPS)==0:
@@ -824,10 +837,12 @@ async def main():
                             game.gamesize=(GRID_SIZE[0]*BOARD_SIZE[0]+BAR_W,GRID_SIZE[1]*BOARD_SIZE[1]) 
                             game.screen = pygame.display.set_mode(game.gamesize, pygame.RESIZABLE)
                             game.draftsc = pygame.Surface(game.screen.get_size(), pygame.SRCALPHA)
+                            game.info_rect=INFO_RECT_CAND[0]
                         else:
                             game.gamesize=(GRID_SIZE[0]*BOARD_SIZE[0]*2,GRID_SIZE[1]*BOARD_SIZE[1]+BAR_H) 
                             game.screen = pygame.display.set_mode(game.gamesize, pygame.RESIZABLE)
                             game.draftsc = pygame.Surface(game.screen.get_size(), pygame.SRCALPHA)
+                            game.info_rect=INFO_RECT_CAND[1]
                         if game.cpu_mode_flag:
                             game.set_cpuframes()
                     elif game.double_rect_off.collidepoint(px, py) or game.text_double_rect_off.collidepoint(px, py):
@@ -941,22 +956,26 @@ async def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                    pygame.quit()
+                    sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     px,py = event.pos
                     #if game.card_rect[game.hand[read_cnt]] is not None:
-                    getcard=None
-                    ith=read_cnt
-                    if game.color_2 is None:
-                        if game.card_rect[game.hand[ith]] is not None:
-                            getcard=game.hand[ith]
-                    elif game.color_2 is not None and game.color==game.color_2:
-                        if game.card_rect[game.hand[ith]] is not None:
-                            getcard=game.hand[ith]
-                        elif game.card_rect[game.hand[ith]+20] is not None:
-                            getcard=game.hand[ith]+20
-                    elif game.color_2 is not None and game.color!=game.color_2:
-                            if game.card_rect[game.hand[ith]] is not None:
-                                getcard=game.hand[ith]
+                    #getcard=None
+                    #ith=read_cnt
+                    #if game.color_2 is None:
+                    #    if game.card_rect[game.hand[ith]] is not None:
+                    #        getcard=game.hand[ith]
+                    #else: 
+                    #    if game.color==game.color_2:
+                    #        if game.card_rect[game.hand[ith]] is not None:
+                    #            getcard=game.hand[ith]
+                    #        elif game.card_rect[game.hand[ith]+20] is not None:
+                    #            getcard=game.hand[ith]+20
+                    #    else:
+                    #        if game.card_rect[game.hand[ith]] is not None:
+                    #            getcard=game.hand[ith]
+                    getcard=1
                     if getcard is not None:
                         res=game.update(px,py,read_cnt,100-int(100/(SECTION_TIME*FPS)*cnt))
                         if res:
@@ -969,7 +988,7 @@ async def main():
                         if allobtained:
                             cnt=(SECTION_TIME-2)*FPS
             if game.cpuscore!=0 and cnt==game.cpuframes[read_cnt] and game.card_rect[game.hand[read_cnt]] is not None:
-                game.cpu_atack(read_cnt)
+                game.cpu_atack(read_cnt,100-int(100/(SECTION_TIME*FPS)*cnt))
                 cnt=(SECTION_TIME-2)*FPS
             game.draw_board(cnt,stage)
             if not game.double_mode_flag:
