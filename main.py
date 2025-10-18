@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import copy
 import asyncio
 from PIL import Image
 GREEN = (0, 128, 0)
@@ -135,8 +136,11 @@ class Karuta:
             elif -1< y < 0:
                 y = -1
             points.append([x, y])
-        random.shuffle(points)
-        self.wander_ang = points+points
+        shuffled_points1 = copy.deepcopy(points)
+        random.shuffle(shuffled_points1)
+        shuffled_points2 = copy.deepcopy(points)
+        random.shuffle(shuffled_points2)
+        self.wander_ang = shuffled_points1 + shuffled_points2
         self.screen=None
         self.clock=None
         self.finish_flag=False
@@ -277,9 +281,9 @@ class Karuta:
         self.x0=0
         self.x0_2=GRID_SIZE[0]*BOARD_SIZE[0]
         self.y0=0
-        if(stage==2 and self.wander_mode_flag):
-            for ii in range(card_num):
-                if self.card_rect[ii] is not None:
+        for ii in range(card_num):
+            if self.card_rect[ii] is not None:
+                if(stage==2 and self.wander_mode_flag):
                     if ii < 20:
                         left_edge = self.x0
                     else:
@@ -294,25 +298,28 @@ class Karuta:
                     self.card_rect[ii].y += self.wander_ang[ii][1]
                     if self.card_rect[ii].left < left_edge:
                         self.card_rect[ii].left = left_edge
-                        self.wander_ang[ii][0] *= -1 
+                        self.wander_ang[ii][0] *= -1
+                        self.wander_ang[ii][1] += -1+ii%3
                         self.card_rect[ii].x += self.wander_ang[ii][0]
                     elif self.card_rect[ii].right > right_edge:
                         self.card_rect[ii].right = right_edge
-                        self.wander_ang[ii][0] *= -1 
+                        self.wander_ang[ii][0] *= -1
+                        self.wander_ang[ii][1] += -1+ii%3
                         self.card_rect[ii].x += self.wander_ang[ii][0]
                     if self.card_rect[ii].top < top_edge:
                         self.card_rect[ii].top = top_edge
                         self.wander_ang[ii][1] *= -1 
+                        self.wander_ang[ii][0] += -1+ii%3
                         self.card_rect[ii].y += self.wander_ang[ii][1]
                     elif self.card_rect[ii].bottom > bottom_edge:
                         self.card_rect[ii].bottom = bottom_edge
                         self.wander_ang[ii][1] *= -1 
+                        self.wander_ang[ii][0] += -1+ii%3
                         self.card_rect[ii].y += self.wander_ang[ii][1]
-        for i in range(card_num):
-            if self.card_rect[i] is not None and i != self.draggingItemIndex:
-                self.draftsc.blit(self.rotated_img[i], self.card_rect[i].topleft)
-                if self.invisible_flag > 0:
-                    self.draw_hidescr(i,cnt,stage)
+                if ii != self.draggingItemIndex:
+                    self.draftsc.blit(self.rotated_img[ii], self.card_rect[ii].topleft)
+                    if self.invisible_flag > 0:
+                        self.draw_hidescr(ii,cnt,stage)
         if self.draggingItemIndex != None and self.drgCornerOffsetX != 0:
                 self.draftsc.blit(self.rotated_img[self.draggingItemIndex], (self.drgCornerOffsetX,self.drgCornerOffsetY))
         if self.moveflag:
