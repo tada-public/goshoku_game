@@ -125,8 +125,8 @@ class Karuta:
             index = angle_deg // 10
             cos_value = cos_values[index]
             sin_value = sin_values[index]
-            x = radius * cos_value *2
-            y = radius * sin_value *2
+            x = radius * cos_value
+            y = radius * sin_value
             if 0<= x < 1:
                 x = 1
             elif -1< x < 0:
@@ -286,49 +286,46 @@ class Karuta:
             if self.card_rect[ii] is not None:
                 if stage==2 and self.wander_mode_flag:
                     if ii < 20:
-                        if cnt%2 == 0:
+                        left_edge = self.x0
+                        if cnt%2 == 0 and self.double_mode_flag:
                             skipFlag=True
-                        else:
-                            left_edge = self.x0
-                    if ii >= 20:
-                        if cnt%2 == 1:
+                    else:
+                        left_edge = self.x0_2
+                        if cnt%2 == 1  and self.double_mode_flag:
                             skipFlag=True
-                        else:
-                            left_edge = self.x0_2
-                    if not skipFlag:
-                        right_edge = left_edge+GRID_SIZE[0]*BOARD_SIZE[0]
-                        top_edge = self.y0
-                        bottom_edge = top_edge+GRID_SIZE[1]*BOARD_SIZE[1]
-                        if self.color_2 is not None and self.color != self.color_2:
-                            left_edge = self.x0
-                            right_edge = self.x0+GRID_SIZE[0]*BOARD_SIZE[0]*2
+                    right_edge = left_edge+GRID_SIZE[0]*BOARD_SIZE[0]
+                    top_edge = self.y0
+                    bottom_edge = top_edge+GRID_SIZE[1]*BOARD_SIZE[1]
+                    if self.color_2 is not None and self.color != self.color_2:
+                        left_edge = self.x0
+                        right_edge = self.x0+GRID_SIZE[0]*BOARD_SIZE[0]*2
+                    self.card_rect[ii].x += self.wander_ang[ii][0]
+                    self.card_rect[ii].y += self.wander_ang[ii][1]
+                    if self.card_rect[ii].left < left_edge:
+                        self.card_rect[ii].left = left_edge
+                        self.wander_ang[ii][0] *= -1
+                        self.wander_ang[ii][1] += -1+ii%3
                         self.card_rect[ii].x += self.wander_ang[ii][0]
+                    elif self.card_rect[ii].right > right_edge:
+                        self.card_rect[ii].right = right_edge
+                        self.wander_ang[ii][0] *= -1
+                        self.wander_ang[ii][1] += -1+ii%3
+                        self.card_rect[ii].x += self.wander_ang[ii][0]
+                    if self.card_rect[ii].top < top_edge:
+                        self.card_rect[ii].top = top_edge
+                        self.wander_ang[ii][1] *= -1 
+                        self.wander_ang[ii][0] += -1+ii%3
                         self.card_rect[ii].y += self.wander_ang[ii][1]
-                        if self.card_rect[ii].left < left_edge:
-                            self.card_rect[ii].left = left_edge
-                            self.wander_ang[ii][0] *= -1
-                            self.wander_ang[ii][1] += -1+ii%3
-                            self.card_rect[ii].x += self.wander_ang[ii][0]
-                        elif self.card_rect[ii].right > right_edge:
-                            self.card_rect[ii].right = right_edge
-                            self.wander_ang[ii][0] *= -1
-                            self.wander_ang[ii][1] += -1+ii%3
-                            self.card_rect[ii].x += self.wander_ang[ii][0]
-                        if self.card_rect[ii].top < top_edge:
-                            self.card_rect[ii].top = top_edge
-                            self.wander_ang[ii][1] *= -1 
-                            self.wander_ang[ii][0] += -1+ii%3
-                            self.card_rect[ii].y += self.wander_ang[ii][1]
-                        elif self.card_rect[ii].bottom > bottom_edge:
-                            self.card_rect[ii].bottom = bottom_edge
-                            self.wander_ang[ii][1] *= -1 
-                            self.wander_ang[ii][0] += -1+ii%3
-                            self.card_rect[ii].y += self.wander_ang[ii][1]
+                    elif self.card_rect[ii].bottom > bottom_edge:
+                        self.card_rect[ii].bottom = bottom_edge
+                        self.wander_ang[ii][1] *= -1 
+                        self.wander_ang[ii][0] += -1+ii%3
+                        self.card_rect[ii].y += self.wander_ang[ii][1]
                 if ii != self.draggingItemIndex:
                     self.screen.blit(self.rotated_img[ii], self.card_rect[ii].topleft)
                     if self.invisible_flag > 0:
                         self.draw_hidescr(ii,cnt,stage)
-        if self.draggingItemIndex != None and self.drgCornerOffsetX != 0:
+        if self.draggingItemIndex != None and self.drgCornerOffsetX != 0 and not skipFlag:
                 self.screen.blit(self.rotated_img[self.draggingItemIndex], (self.drgCornerOffsetX,self.drgCornerOffsetY))
         if self.moveflag:
             if self.move[3]>1:
