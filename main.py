@@ -273,10 +273,12 @@ class Karuta:
             cnt=0
         #self.screen.fill(DARKGRAY)
         pygame.draw.rect(self.screen, DARKGRAY, self.info_rect)
-        self.screen.blit(background_image_g, (self.x0, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
+        #self.screen.blit(background_image_g, (self.x0, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
+        pygame.draw.rect(self.screen, "#375E39", (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
         card_num=FULL_CARDS
         if self.double_mode_flag:
-            self.screen.blit(background_image_y, (self.x0_2, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
+            #self.screen.blit(background_image_y, (self.x0_2, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
+            pygame.draw.rect(self.screen, "#797A27", (GRID_SIZE[0]*BOARD_SIZE[0], 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
             card_num=FULL_CARDS*2
         self.x0=0
         self.x0_2=GRID_SIZE[0]*BOARD_SIZE[0]
@@ -287,12 +289,12 @@ class Karuta:
                 if stage==2 and self.wander_mode_flag:
                     if ii < 20:
                         left_edge = self.x0
-                        if cnt%2 == 0 and self.double_mode_flag:
-                            skipFlag=True
+                        #if cnt%2 == 0 and self.double_mode_flag:
+                        #    skipFlag=True
                     else:
                         left_edge = self.x0_2
-                        if cnt%2 == 1  and self.double_mode_flag:
-                            skipFlag=True
+                        #if cnt%2 == 1  and self.double_mode_flag:
+                        #    skipFlag=True
                     right_edge = left_edge+GRID_SIZE[0]*BOARD_SIZE[0]
                     top_edge = self.y0
                     bottom_edge = top_edge+GRID_SIZE[1]*BOARD_SIZE[1]
@@ -325,7 +327,7 @@ class Karuta:
                     self.screen.blit(self.rotated_img[ii], self.card_rect[ii].topleft)
                     if self.invisible_flag > 0:
                         self.draw_hidescr(ii,cnt,stage)
-        if self.draggingItemIndex != None and self.drgCornerOffsetX != 0 and not skipFlag:
+        if self.draggingItemIndex != None and self.drgCornerOffsetX != 0:
                 self.screen.blit(self.rotated_img[self.draggingItemIndex], (self.drgCornerOffsetX,self.drgCornerOffsetY))
         if self.moveflag:
             if self.move[3]>1:
