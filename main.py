@@ -148,14 +148,14 @@ class Karuta:
         self.currentobtained=0
         self.currentfanfale=None
         self.result_text=None
-        self.draftsc=None
+        #self.draftsc=None
         self.cpu_get_score=0
 
     def initialize(self):
         pygame.init()
         pygame.mixer.init()
         self.screen = pygame.display.set_mode(SIZE,pygame.RESIZABLE)
-        self.draftsc = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
+        #self.draftsc = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
         pygame.display.set_caption("Goshoku_Hyakunin_Isshu")
         self.clock = pygame.time.Clock()
 
@@ -271,12 +271,12 @@ class Karuta:
     def draw_board(self,cnt,stage):
         if(cnt<0):
             cnt=0
-        #self.draftsc.fill(DARKGRAY)
-        pygame.draw.rect(self.draftsc, DARKGRAY, self.info_rect)
-        self.draftsc.blit(background_image_g, (self.x0, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
+        #self.screen.fill(DARKGRAY)
+        pygame.draw.rect(self.screen, DARKGRAY, self.info_rect)
+        self.screen.blit(background_image_g, (self.x0, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
         card_num=FULL_CARDS
         if self.double_mode_flag:
-            self.draftsc.blit(background_image_y, (self.x0_2, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
+            self.screen.blit(background_image_y, (self.x0_2, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
             card_num=FULL_CARDS*2
         self.x0=0
         self.x0_2=GRID_SIZE[0]*BOARD_SIZE[0]
@@ -317,17 +317,17 @@ class Karuta:
                         self.wander_ang[ii][0] += -1+ii%3
                         self.card_rect[ii].y += self.wander_ang[ii][1]
                 if ii != self.draggingItemIndex:
-                    self.draftsc.blit(self.rotated_img[ii], self.card_rect[ii].topleft)
+                    self.screen.blit(self.rotated_img[ii], self.card_rect[ii].topleft)
                     if self.invisible_flag > 0:
                         self.draw_hidescr(ii,cnt,stage)
         if self.draggingItemIndex != None and self.drgCornerOffsetX != 0:
-                self.draftsc.blit(self.rotated_img[self.draggingItemIndex], (self.drgCornerOffsetX,self.drgCornerOffsetY))
+                self.screen.blit(self.rotated_img[self.draggingItemIndex], (self.drgCornerOffsetX,self.drgCornerOffsetY))
         if self.moveflag:
             if self.move[3]>1:
                 temp_pos=(self.x0+self.move[0]*GRID_SIZE[0]+SUKIMA,self.y0+self.move[1]*GRID_SIZE[1]+SUKIMA)
                 pos=(temp_pos[0]-(temp_pos[0]-int(self.gamesize[0]/2))/MOVE_FRAME*(MOVE_FRAME-self.move[3]+1),\
                      temp_pos[1]-(temp_pos[1]-self.gamesize[1]*self.move[4])/MOVE_FRAME*(MOVE_FRAME-self.move[3]+1))
-                self.draftsc.blit(self.rotated_img[self.move[2]], pos)
+                self.screen.blit(self.rotated_img[self.move[2]], pos)
                 self.move[3]-=1
             elif self.move[3]:
                 self.moveflag=False
@@ -338,17 +338,17 @@ class Karuta:
         score_board_sukima=10
         font = pygame.font.Font(None, font_size)
         text=font.render("SCORE",True, color_char)
-        self.draftsc.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+score_board_sukima))
+        self.screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+score_board_sukima))
         text=font.render("{}".format(self.score),True, color_char)
-        self.draftsc.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size+score_board_sukima))
+        self.screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size+score_board_sukima))
         text=font.render("CARD",True, color_char)
-        self.draftsc.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*2+score_board_sukima))
+        self.screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*2+score_board_sukima))
         text=font.render("{}".format(self.obtainedcard),True, color_char)
-        self.draftsc.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*3+score_board_sukima))
+        self.screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*3+score_board_sukima))
         text=font.render("TIME",True, color_char)
-        self.draftsc.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*5+score_board_sukima))
+        self.screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*5+score_board_sukima))
         text=font.render("{}".format(SECTION_TIME-int(cnt/FPS)),True, color_char)            
-        self.draftsc.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*6+score_board_sukima))
+        self.screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*6+score_board_sukima))
 
     def draw_board_text_2(self,cnt):
         font_size=24
@@ -358,13 +358,13 @@ class Karuta:
         currenttext_l="[LEFT] SCORE: {}, CARD: {}".format(self.score,self.obtainedcard)
         currenttext_r="[RIGHT] SCORE: {}, CARD: {}".format(self.score_2,self.obtainedcard_2)
         text=font.render(currenttext,True, color_char)
-        self.draftsc.blit(text, (self.x0+score_board_sukima, self.y0+GRID_SIZE[1]*BOARD_SIZE[1]+score_board_sukima))
+        self.screen.blit(text, (self.x0+score_board_sukima, self.y0+GRID_SIZE[1]*BOARD_SIZE[1]+score_board_sukima))
         text=font.render(currenttext_l,True, color_char)
-        self.draftsc.blit(text, (self.x0+score_board_sukima, self.y0+GRID_SIZE[1]*BOARD_SIZE[1]+score_board_sukima+font_size))
+        self.screen.blit(text, (self.x0+score_board_sukima, self.y0+GRID_SIZE[1]*BOARD_SIZE[1]+score_board_sukima+font_size))
         text=font.render(currenttext_r,True, color_char)
-        #self.draftsc.blit(text, (self.x0_2+score_board_sukima, self.y0+GRID_SIZE[1]*BOARD_SIZE[1]+score_board_sukima+font_size))
+        #self.screen.blit(text, (self.x0_2+score_board_sukima, self.y0+GRID_SIZE[1]*BOARD_SIZE[1]+score_board_sukima+font_size))
         #print(f"{text.get_rect()}, {text.get_rect()[3]}")
-        self.draftsc.blit(text, (self.x0_2+GRID_SIZE[0]*BOARD_SIZE[0]-(score_board_sukima+text.get_rect()[2]+200), self.y0+GRID_SIZE[1]*BOARD_SIZE[1]+score_board_sukima+font_size))
+        self.screen.blit(text, (self.x0_2+GRID_SIZE[0]*BOARD_SIZE[0]-(score_board_sukima+text.get_rect()[2]+200), self.y0+GRID_SIZE[1]*BOARD_SIZE[1]+score_board_sukima+font_size))
 
     def draw_dist_info(self):
         font_size=24
@@ -372,14 +372,14 @@ class Karuta:
         font = pygame.font.Font(None, font_size)
         if not self.double_mode_flag:
             text=font.render("Arrange",True, color_char)
-            self.draftsc.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+score_board_sukima))
+            self.screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+score_board_sukima))
             text=font.render("the cards",True, color_char)
-            self.draftsc.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size+score_board_sukima))
+            self.screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size+score_board_sukima))
             text=font.render("as you like",True, color_char)
-            self.draftsc.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*2+score_board_sukima))
+            self.screen.blit(text, (self.x0+BOARD_SIZE[0]*GRID_SIZE[0]+score_board_sukima, self.y0+font_size*2+score_board_sukima))
         else:
             text=font.render("Arrange the cards as you like",True, color_char)
-            self.draftsc.blit(text, (self.x0+score_board_sukima, self.y0+GRID_SIZE[1]*BOARD_SIZE[1]+score_board_sukima))
+            self.screen.blit(text, (self.x0+score_board_sukima, self.y0+GRID_SIZE[1]*BOARD_SIZE[1]+score_board_sukima))
 
     def draw_startbtn(self,stage):
         font = pygame.font.Font(None, 24)
@@ -396,11 +396,11 @@ class Karuta:
         text_color = 'darkgreen'
         button_rect = pygame.Rect(self.x0+x-w//2+5, self.y0+y-h//2+5, w-10, h-10)
         self.button_rect_edge = pygame.Rect(self.x0 + x - w // 2, self.y0 + y - h // 2, w, h)
-        pygame.draw.rect(self.draftsc, button_color_edge, self.button_rect_edge)
-        pygame.draw.rect(self.draftsc, button_color, button_rect)
+        pygame.draw.rect(self.screen, button_color_edge, self.button_rect_edge)
+        pygame.draw.rect(self.screen, button_color, button_rect)
         text = font.render("START", True, text_color)
         text_rect = text.get_rect(center=(x, y))
-        self.draftsc.blit(text, text_rect)
+        self.screen.blit(text, text_rect)
 
     def draw_board_char(self,cnt,ith):
         if cnt <= 0:
@@ -426,7 +426,7 @@ class Karuta:
         crop_center = (self.x0+GRID_SIZE[0]*BOARD_SIZE[0]+BAR_W//2, self.y0+SIZE[1]//2-font_size//2, font_size, font_size)
         display_x = crop_center[0] - crop_width // 2
         display_y = crop_center[1]
-        self.draftsc.blit(cropped_image, (display_x, display_y))
+        self.screen.blit(cropped_image, (display_x, display_y))
 
     def draw_board_char_2(self,cnt,ith):
         if cnt <= 0:
@@ -458,7 +458,7 @@ class Karuta:
         crop_center = (self.x0+GRID_SIZE[0]*4+40, self.y0+SIZE[1]+BAR_H//2, font_size, font_size)
         display_x = crop_center[0]
         display_y = crop_center[1] - crop_height // 2
-        self.draftsc.blit(cropped_image, (display_x, display_y))
+        self.screen.blit(cropped_image, (display_x, display_y))
 
     def draw_board_result(self,stage=3):
         self.display_result()
@@ -478,9 +478,9 @@ class Karuta:
             else:
                 thiscolor=self.color_2
             hidescr.fill((colors_code_S30_alpha[thiscolor][0],colors_code_S30_alpha[thiscolor][1],colors_code_S30_alpha[thiscolor][2],alpha))
-            #self.draftsc.blit(hidescr,pos)
+            #self.screen.blit(hidescr,pos)
             hidescr_rect=hidescr.get_rect(center=pos)
-            self.draftsc.blit(hidescr, hidescr_rect.topleft)
+            self.screen.blit(hidescr, hidescr_rect.topleft)
 
     def set_result(self):
         maxscore=max(self.score,self.score_2)
@@ -516,7 +516,7 @@ class Karuta:
             cx, cy =SIZE[0], SIZE[1] // 2            
         text_rect = text.get_rect(center=(cx,cy))
         text_rect.move_ip(self.x0, self.y0)
-        self.draftsc.blit(text, text_rect)
+        self.screen.blit(text, text_rect)
         self.char_flag=False
     
     def update(self,x,y,ith,thisscore):
@@ -571,9 +571,9 @@ class Karuta:
         self.char_flag=True
 
     def draw_select_board(self):
-        #self.draftsc.fill(DARKGRAY)
-        #pygame.draw.rect(self.draftsc, DARKGRAY, self.info_rect)
-        self.draftsc.blit(background_image_g, (self.x0, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
+        #self.screen.fill(DARKGRAY)
+        #pygame.draw.rect(self.screen, DARKGRAY, self.info_rect)
+        self.screen.blit(background_image_g, (self.x0, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
         font_size=32
         font = pygame.font.Font(None, font_size)
         card_represent=[5,13,3,4,8]
@@ -581,7 +581,7 @@ class Karuta:
             gridpos=(i%BOARD_SIZE[0],1)
             centerpos=(self.x0+gridpos[0]*GRID_SIZE[0]+GRID_SIZE[0]//2, self.y0+gridpos[1]*GRID_SIZE[1]+GRID_SIZE[1]//2)
             self.title_card_rect[i]=img[i][card_represent[i]].get_rect(center=centerpos)
-            self.draftsc.blit(img[i][card_represent[i]], self.title_card_rect[i].topleft)
+            self.screen.blit(img[i][card_represent[i]], self.title_card_rect[i].topleft)
         if not self.double_mode_flag:
             color_double_off, color_double_on = 'red', 'gray'
         else:
@@ -612,102 +612,102 @@ class Karuta:
         double_box_y=self.y0+int(GRID_SIZE[1]*2.5)+box_size
         self.double_rect_off = pygame.Rect(double_box_x, double_box_y+box_size, box_size, box_size)
         self.double_rect_on = pygame.Rect(double_box_x, double_box_y+int(box_size*2.5), box_size, box_size)
-        pygame.draw.rect(self.draftsc, color_double_off, self.double_rect_off)
-        pygame.draw.rect(self.draftsc, 'gray', self.double_rect_off, border_w)
-        pygame.draw.rect(self.draftsc, color_double_on, self.double_rect_on)
-        pygame.draw.rect(self.draftsc, 'gray', self.double_rect_on, border_w)
+        pygame.draw.rect(self.screen, color_double_off, self.double_rect_off)
+        pygame.draw.rect(self.screen, 'gray', self.double_rect_off, border_w)
+        pygame.draw.rect(self.screen, color_double_on, self.double_rect_on)
+        pygame.draw.rect(self.screen, 'gray', self.double_rect_on, border_w)
         text = small_font.render("double mode", True, 'white')
         text_rect = text.get_rect(midleft=(double_box_x, double_box_y))
-        self.draftsc.blit(text, text_rect)
+        self.screen.blit(text, text_rect)
         text = small_font.render("OFF", True, 'white')
         self.text_double_rect_off = text.get_rect(midleft=(double_box_x+int(box_size*1.5), double_box_y+int(box_size*1.5)))
-        self.draftsc.blit(text, self.text_double_rect_off)
+        self.screen.blit(text, self.text_double_rect_off)
         text = small_font.render("ON", True, 'white')
         self.text_double_rect_on = text.get_rect(midleft=(double_box_x+int(box_size*1.5), double_box_y+int(box_size*3)))
-        self.draftsc.blit(text, self.text_double_rect_on)
+        self.screen.blit(text, self.text_double_rect_on)
 
         cpu_box_x=self.x0+GRID_SIZE[0]*1+box_size
         cpu_box_y=self.y0+int(GRID_SIZE[1]*2.5)+box_size
         self.cpu_rect_off = pygame.Rect(cpu_box_x, cpu_box_y+box_size, box_size, box_size)
         self.cpu_rect_on = pygame.Rect(cpu_box_x, cpu_box_y+int(box_size*2.5), box_size, box_size)
-        pygame.draw.rect(self.draftsc, color_cpu_off, self.cpu_rect_off)
-        pygame.draw.rect(self.draftsc, 'gray', self.cpu_rect_off, border_w)
-        pygame.draw.rect(self.draftsc, color_cpu_on, self.cpu_rect_on)
-        pygame.draw.rect(self.draftsc, 'gray', self.cpu_rect_on, border_w)
+        pygame.draw.rect(self.screen, color_cpu_off, self.cpu_rect_off)
+        pygame.draw.rect(self.screen, 'gray', self.cpu_rect_off, border_w)
+        pygame.draw.rect(self.screen, color_cpu_on, self.cpu_rect_on)
+        pygame.draw.rect(self.screen, 'gray', self.cpu_rect_on, border_w)
         text = small_font.render("CPU mode", True, 'white')
         text_rect = text.get_rect(midleft=(cpu_box_x, cpu_box_y))
-        self.draftsc.blit(text, text_rect)
+        self.screen.blit(text, text_rect)
         text = small_font.render("OFF", True, 'white')
         self.text_cpu_rect_off = text.get_rect(midleft=(cpu_box_x+int(box_size*1.5), cpu_box_y+int(box_size*1.5)))
-        self.draftsc.blit(text, self.text_cpu_rect_off)
+        self.screen.blit(text, self.text_cpu_rect_off)
         text = small_font.render("ON", True, 'white')
         self.text_cpu_rect_on = text.get_rect(midleft=(cpu_box_x+int(box_size*1.5), cpu_box_y+int(box_size*3)))
-        self.draftsc.blit(text, self.text_cpu_rect_on)
+        self.screen.blit(text, self.text_cpu_rect_on)
 
         char_box_x=self.x0+GRID_SIZE[0]*3+box_size
         char_box_y=self.y0+int(GRID_SIZE[1]*2.5)+box_size
         self.char_rect_off = pygame.Rect(char_box_x, char_box_y+box_size, box_size, box_size)
         self.char_rect_on = pygame.Rect(char_box_x, char_box_y+int(box_size*2.5), box_size, box_size)
-        pygame.draw.rect(self.draftsc, color_char_off, self.char_rect_off)
-        pygame.draw.rect(self.draftsc, 'gray', self.char_rect_off, border_w)
-        pygame.draw.rect(self.draftsc, color_char_on, self.char_rect_on)
-        pygame.draw.rect(self.draftsc, 'gray', self.char_rect_on, border_w)
+        pygame.draw.rect(self.screen, color_char_off, self.char_rect_off)
+        pygame.draw.rect(self.screen, 'gray', self.char_rect_off, border_w)
+        pygame.draw.rect(self.screen, color_char_on, self.char_rect_on)
+        pygame.draw.rect(self.screen, 'gray', self.char_rect_on, border_w)
         text = small_font.render("readable mode", True, 'white')
         text_rect = text.get_rect(midleft=(char_box_x, char_box_y))
-        self.draftsc.blit(text, text_rect)
+        self.screen.blit(text, text_rect)
         text = small_font.render("OFF", True, 'white')
         self.text_char_rect_off = text.get_rect(midleft=(char_box_x+int(box_size*1.5), char_box_y+int(box_size*1.5)))
-        self.draftsc.blit(text, self.text_char_rect_off)
+        self.screen.blit(text, self.text_char_rect_off)
         text = small_font.render("ON", True, 'white')
         self.text_char_rect_on = text.get_rect(midleft=(char_box_x+int(box_size*1.5), char_box_y+int(box_size*3)))
-        self.draftsc.blit(text, self.text_char_rect_on)
+        self.screen.blit(text, self.text_char_rect_on)
 
         box_x=self.x0+GRID_SIZE[0]*3+box_size
         box_y=self.y0+GRID_SIZE[1]*3+box_size
         self.inv_rect_off = pygame.Rect(box_x, box_y+box_size, box_size, box_size)
         self.inv_rect_on = pygame.Rect(box_x, box_y+int(box_size*2.5), box_size, box_size)
         self.inv_rect_on2 = pygame.Rect(box_x, box_y+int(box_size*4), box_size, box_size)
-        pygame.draw.rect(self.draftsc, color_off, self.inv_rect_off)
-        pygame.draw.rect(self.draftsc, 'gray', self.inv_rect_off, border_w)
-        pygame.draw.rect(self.draftsc, color_on, self.inv_rect_on)
-        pygame.draw.rect(self.draftsc, 'gray', self.inv_rect_on, border_w)
-        pygame.draw.rect(self.draftsc, color_on2, self.inv_rect_on2)
-        pygame.draw.rect(self.draftsc, 'gray', self.inv_rect_on2, border_w)
+        pygame.draw.rect(self.screen, color_off, self.inv_rect_off)
+        pygame.draw.rect(self.screen, 'gray', self.inv_rect_off, border_w)
+        pygame.draw.rect(self.screen, color_on, self.inv_rect_on)
+        pygame.draw.rect(self.screen, 'gray', self.inv_rect_on, border_w)
+        pygame.draw.rect(self.screen, color_on2, self.inv_rect_on2)
+        pygame.draw.rect(self.screen, 'gray', self.inv_rect_on2, border_w)
         text = small_font.render("invisible mode", True, 'white')
         text_rect = text.get_rect(midleft=(box_x, box_y))
-        self.draftsc.blit(text, text_rect)
+        self.screen.blit(text, text_rect)
         text = small_font.render("OFF", True, 'white')
         self.text_inv_rect_off = text.get_rect(midleft=(box_x+int(box_size*1.5), box_y+int(box_size*1.5)))
-        self.draftsc.blit(text, self.text_inv_rect_off)
+        self.screen.blit(text, self.text_inv_rect_off)
         text = small_font.render("ON", True, 'white')
         self.text_inv_rect_on = text.get_rect(midleft=(box_x+int(box_size*1.5), box_y+int(box_size*3)))
-        self.draftsc.blit(text, self.text_inv_rect_on)
+        self.screen.blit(text, self.text_inv_rect_on)
         text = small_font.render("ON for my side", True, 'white')
         self.text_inv_rect_on2 = text.get_rect(midleft=(box_x+int(box_size*1.5), box_y+int(box_size*4.5)))
-        self.draftsc.blit(text, self.text_inv_rect_on2)
+        self.screen.blit(text, self.text_inv_rect_on2)
 
         wander_box_x=self.x0+GRID_SIZE[0]*4+box_size
         wander_box_y=self.y0+int(GRID_SIZE[1]*2.5)+box_size
         self.wander_rect_off = pygame.Rect(wander_box_x, wander_box_y+box_size, box_size, box_size)
         self.wander_rect_on = pygame.Rect(wander_box_x, wander_box_y+int(box_size*2.5), box_size, box_size)
-        pygame.draw.rect(self.draftsc, color_wander_off, self.wander_rect_off)
-        pygame.draw.rect(self.draftsc, 'gray', self.wander_rect_off, border_w)
-        pygame.draw.rect(self.draftsc, color_wander_on, self.wander_rect_on)
-        pygame.draw.rect(self.draftsc, 'gray', self.wander_rect_on, border_w)
+        pygame.draw.rect(self.screen, color_wander_off, self.wander_rect_off)
+        pygame.draw.rect(self.screen, 'gray', self.wander_rect_off, border_w)
+        pygame.draw.rect(self.screen, color_wander_on, self.wander_rect_on)
+        pygame.draw.rect(self.screen, 'gray', self.wander_rect_on, border_w)
         text = small_font.render("wandering mode", True, 'white')
         text_rect = text.get_rect(midleft=(wander_box_x, wander_box_y))
-        self.draftsc.blit(text, text_rect)
+        self.screen.blit(text, text_rect)
         text = small_font.render("OFF", True, 'white')
         self.text_wander_rect_off = text.get_rect(midleft=(wander_box_x+int(box_size*1.5), wander_box_y+int(box_size*1.5)))
-        self.draftsc.blit(text, self.text_wander_rect_off)
+        self.screen.blit(text, self.text_wander_rect_off)
         text = small_font.render("ON", True, 'white')
         self.text_wander_rect_on = text.get_rect(midleft=(wander_box_x+int(box_size*1.5), wander_box_y+int(box_size*3)))
-        self.draftsc.blit(text, self.text_wander_rect_on)
+        self.screen.blit(text, self.text_wander_rect_on)
 
         text=font.render("SELECT COLOR",True, color_char)
         text_rect = text.get_rect(center=(int(GRID_SIZE[0]*2.5), int(GRID_SIZE[1]*0.5)))
         text_rect.move_ip(self.x0, self.y0)
-        self.draftsc.blit(text, text_rect)
+        self.screen.blit(text, text_rect)
 
     def draw_selected_colors(self):
         box_size=24
@@ -715,23 +715,23 @@ class Karuta:
         tx, ty = self.x0+box_size, self.y0+int(GRID_SIZE[1]*2.5)+int(box_size*5.5)
         text = small_font.render("selected colors: ", True, 'white')
         text_rect = text.get_rect(midleft=(tx, ty))
-        self.draftsc.blit(text, text_rect)
+        self.screen.blit(text, text_rect)
         if self.color is not None:
             color_rect = pygame.Rect(self.x0+box_size, self.y0+int(GRID_SIZE[1]*2.5)+box_size*6, box_size, box_size)
-            pygame.draw.rect(self.draftsc, colors_code[self.color], color_rect)
+            pygame.draw.rect(self.screen, colors_code[self.color], color_rect)
         if self.color_2 is not None:
             color_rect = pygame.Rect(self.x0+box_size*2.5, self.y0+int(GRID_SIZE[1]*2.5)+box_size*6, box_size, box_size)
-            pygame.draw.rect(self.draftsc, colors_code[self.color_2], color_rect)
+            pygame.draw.rect(self.screen, colors_code[self.color_2], color_rect)
 
     def draw_slider(self, thiscpuscore):
         steps = (thiscpuscore - SLIDER_MIN_VALUE) // SLIDER_STEP
         ratio = steps / ((SLIDER_MAX_VALUE - SLIDER_MIN_VALUE) // SLIDER_STEP)
         self.knob_x= int(SLIDER_POS[0] + ratio * SLIDER_WIDTH)
-        pygame.draw.rect(self.draftsc, 'gray', (SLIDER_POS[0], SLIDER_POS[1], SLIDER_WIDTH, SLIDER_HEIGHT))
-        pygame.draw.circle(self.draftsc, 'white', (self.knob_x, SLIDER_POS[1] + SLIDER_HEIGHT // 2), KNOB_RADIUS)
+        pygame.draw.rect(self.screen, 'gray', (SLIDER_POS[0], SLIDER_POS[1], SLIDER_WIDTH, SLIDER_HEIGHT))
+        pygame.draw.circle(self.screen, 'white', (self.knob_x, SLIDER_POS[1] + SLIDER_HEIGHT // 2), KNOB_RADIUS)
         font = pygame.font.Font(None, 24)
         text = font.render(f"CPU Score: {self.cpuscore}", True, (255, 255, 255))
-        self.draftsc.blit(text, (SLIDER_POS[0], SLIDER_POS[1] - 20))
+        self.screen.blit(text, (SLIDER_POS[0], SLIDER_POS[1] - 20))
 
     def update_cpuscore(self,this_knob_x):
         relative_x = this_knob_x - SLIDER_POS[0]
@@ -798,10 +798,10 @@ class Karuta:
     
     def show_loading_screen(self):
         font = pygame.font.Font(None, 24)
-        self.draftsc.blit(background_image_g, (0, 0), (0, 0, SIZE[0], SIZE[1]))
+        self.screen.blit(background_image_g, (0, 0), (0, 0, SIZE[0], SIZE[1]))
         text = font.render("Goshoku Hyakunin Isshu ver. 0.5       Loading...", True, (255, 255, 255))
-        self.draftsc.blit(text, (SIZE[0] // 2 - text.get_width() // 2, SIZE[1] // 2 - text.get_height() // 2))
-        self.screen.blit(self.draftsc, (0, 0))
+        self.screen.blit(text, (SIZE[0] // 2 - text.get_width() // 2, SIZE[1] // 2 - text.get_height() // 2))
+        self.screen.blit(self.screen, (0, 0))
         pygame.display.flip()
 
 async def main():
@@ -843,12 +843,12 @@ async def main():
                         if  not game.double_mode_flag:
                             game.gamesize=(GRID_SIZE[0]*BOARD_SIZE[0]+BAR_W,GRID_SIZE[1]*BOARD_SIZE[1]) 
                             game.screen = pygame.display.set_mode(game.gamesize, pygame.RESIZABLE)
-                            game.draftsc = pygame.Surface(game.screen.get_size(), pygame.SRCALPHA)
+                            #game.draftsc = pygame.Surface(game.screen.get_size(), pygame.SRCALPHA)
                             game.info_rect=INFO_RECT_CAND[0]
                         else:
                             game.gamesize=(GRID_SIZE[0]*BOARD_SIZE[0]*2,GRID_SIZE[1]*BOARD_SIZE[1]+BAR_H) 
                             game.screen = pygame.display.set_mode(game.gamesize, pygame.RESIZABLE)
-                            game.draftsc = pygame.Surface(game.screen.get_size(), pygame.SRCALPHA)
+                            #game.draftsc = pygame.Surface(game.screen.get_size(), pygame.SRCALPHA)
                             game.info_rect=INFO_RECT_CAND[1]
                         if game.cpu_mode_flag:
                             game.set_cpuframes()
@@ -1031,7 +1031,7 @@ async def main():
                         game = Karuta()
                         game.initialize()
                         continue
-        game.screen.blit(game.draftsc, (0, 0))
+        #game.screen.blit(game.draftsc, (0, 0))
         pygame.display.flip()
         game.clock.tick(FPS)
         await asyncio.sleep(0) 
