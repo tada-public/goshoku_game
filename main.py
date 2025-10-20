@@ -7,6 +7,8 @@ from PIL import Image
 GREEN = (0, 128, 0)
 YELLOW = (255, 155, 0)
 DARKGRAY = (64,64,64)
+BGCOL_G="#375E39"
+BGCOL_Y="#797A27"
 BOARD_SIZE=(5,4)
 GRID_SIZE=(118,160)
 CARD_SIZE=(108,150)
@@ -287,11 +289,11 @@ class Karuta:
         #self.screen.fill(DARKGRAY)
         pygame.draw.rect(self.screen, DARKGRAY, self.info_rect)
         #self.screen.blit(background_image_g, (self.x0, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
-        pygame.draw.rect(self.screen, "#375E39", (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
+        pygame.draw.rect(self.screen, BGCOL_G, (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
         card_num=FULL_CARDS
         if self.double_mode_flag:
             #self.screen.blit(background_image_y, (self.x0_2, self.y0), (0, 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
-            pygame.draw.rect(self.screen, "#797A27", (GRID_SIZE[0]*BOARD_SIZE[0], 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
+            pygame.draw.rect(self.screen, BGCOL_Y, (GRID_SIZE[0]*BOARD_SIZE[0], 0, GRID_SIZE[0]*BOARD_SIZE[0], GRID_SIZE[1]*BOARD_SIZE[1]))
             card_num=FULL_CARDS*2
         self.x0=0
         self.x0_2=GRID_SIZE[0]*BOARD_SIZE[0]
