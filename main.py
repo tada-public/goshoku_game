@@ -855,7 +855,7 @@ async def main():
     game.show_loading_screen()
     game.load_source()
     running = True
-    cnt=0
+    cnt=-1
     read_cnt=0
     stage=0
     while running:
@@ -884,6 +884,9 @@ async def main():
                             game.color_prepared and\
                             game.button_rect_edge.collidepoint(px, py)):
                         stage = 1
+                        se["bgm"].stop()
+                        se["bgm"].set_volume(0.5)
+                        se["bgm"].play()
                         cnt = -1
                         if  not game.double_mode_flag:
                             game.gamesize=(GRID_SIZE[0]*BOARD_SIZE[0]+BAR_W,GRID_SIZE[1]*BOARD_SIZE[1]) 
