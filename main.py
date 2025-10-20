@@ -77,6 +77,14 @@ class Karuta:
         h=list(range(FULL_CARDS))
         random.shuffle(h)
         self.hand_2=h
+        self.draworder=[]*FULL_CARDS
+        d=list(range(FULL_CARDS))
+        random.shuffle(d)
+        self.draworder=d
+        self.draworder_2=[]*FULL_CARDS
+        d=list(range(FULL_CARDS))
+        random.shuffle(d)
+        self.draworder_2=d
         self.read_cards=FULL_CARDS-3
         self.gamesize=(SIZE[0],SIZE[1])
         self.double_mode_flag=0
@@ -288,8 +296,9 @@ class Karuta:
         self.x0=0
         self.x0_2=GRID_SIZE[0]*BOARD_SIZE[0]
         self.y0=0
-        for ii in range(card_num):
+        for jj in range(card_num):
             skipFlag=False
+            ii=self.draworder[jj]
             if self.card_rect[ii] is not None:
                 if stage==2 and self.wander_mode_flag:
                     if ii < 20:
@@ -814,11 +823,16 @@ class Karuta:
                     if self.color != self.color_2:
                         temp_waka=self.hand.copy()
                         temp_waka_2=self.hand_2.copy()
+                        temp_draworder=self.draworder.copy()
+                        temp_draworder_2=self.draworder.copy()
                         self.hand=[]
+                        self.draworder=[]
                         self.read_cards=(20-3)*2
                         for ii in range(20):
                             self.hand.append(temp_waka[ii])
                             self.hand.append(temp_waka_2[ii]+20)
+                            self.draworder.append(temp_draworder[ii])
+                            self.draworder.append(temp_draworder_2[ii]+20)
                 return c
         se["ken"].play()
         return 99
@@ -1088,4 +1102,3 @@ if __name__ == "__main__": # 二重ループを起こさないように変更
             loop.create_task(main())
         else:
             raise
-
