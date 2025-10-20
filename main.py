@@ -90,7 +90,7 @@ class Karuta:
         self.char_mode_flag=True
         self.cpu_mode_flag=False
         self.cpuscore=0
-        self.dance_flag=True
+        self.dance_flag=False
         self.slider_dragging = False
         self.knob_x=SLIDER_POS[0]
         self.score=0
@@ -1088,3 +1088,4 @@ if __name__ == "__main__": # 二重ループを起こさないように変更
             loop.create_task(main())
         else:
             raise
+
