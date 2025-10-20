@@ -4,7 +4,7 @@ import random
 import copy
 import asyncio
 from PIL import Image
-GREEN = (0, 128, 0)
+#GREEN = (0, 128, 0)
 YELLOW = (255, 155, 0)
 DARKGRAY = (64,64,64)
 BGCOL_G="#375E39"
@@ -46,7 +46,7 @@ KNOB_RADIUS = 10
 #colors_kanji=["青札","桃札","黄札","緑札","橙札"]
 #colors_eng=["BLUE","PINK","YELLOW","GREEN","ORANGE"]
 colors_code=["#33CCFF","#FF99CC","#FFCC00","#33CC66","#FF9933"]
-colors_code_V85=["#2badd9","#d982ad","#d9ad00","#2bad57","#d9822b"]
+#colors_code_V85=["#2badd9","#d982ad","#d9ad00","#2bad57","#d9822b"]
 #colors_code_S30=["#c2f0ff","#ffe0f0","#fff0b3","#c7ffda","#ffe0c2"]
 colors_code_S30_alpha=[(194,240,255),(255,224,240),(255,240,179),(199,255,218),(255,224,194)]
 color_char=(250,250,250)
@@ -96,7 +96,7 @@ class Karuta:
         self.drgOffsetY=0
         self.drgCornerOffsetX=0
         self.drgCornerOffsetY=0
-        self.char_flag=False
+        #self.char_flag=False
         self.char_mode_flag=True
         self.cpu_mode_flag=False
         self.cpuscore=0
@@ -299,8 +299,11 @@ class Karuta:
         self.x0_2=GRID_SIZE[0]*BOARD_SIZE[0]
         self.y0=0
         for jj in range(card_num):
-            skipFlag=False
-            ii=self.draworder[jj]
+            #skipFlag=False
+            if self.double_mode_flag and self.color != self.color_2:
+                ii=self.draworder[jj]
+            else:
+                ii=jj
             if self.card_rect[ii] is not None:
                 if stage==2 and self.wander_mode_flag:
                     if ii < 20:
@@ -531,7 +534,7 @@ class Karuta:
         text_rect = text.get_rect(center=(cx,cy))
         text_rect.move_ip(self.x0, self.y0)
         self.screen.blit(text, text_rect)
-        self.char_flag=False
+        #self.char_flag=False
     
     def update(self,x,y,ith,thisscore):
         getcard=None
@@ -588,7 +591,7 @@ class Karuta:
             if self.color_2 is not None:
                 se_waka[self.color_2*20+i].stop()
         se_waka[thiscolor*20+thisith].play()
-        self.char_flag=True
+        #self.char_flag=True
 
     def draw_select_board(self):
         #self.screen.fill(DARKGRAY)
@@ -783,11 +786,11 @@ class Karuta:
         se["bgm"].set_volume(0.5)
         se["bgm"].play()
 
-    def sizecheck(self):
-        w, h = pygame.display.get_surface().get_size()
-        self.x0=int((w-self.gamesize[0])/2)
-        self.x0_2=self.x0+GRID_SIZE[0]*BOARD_SIZE[0]
-        self.y0=int((h-self.gamesize[1])/2)
+    #def sizecheck(self):
+    #    w, h = pygame.display.get_surface().get_size()
+    #    self.x0=int((w-self.gamesize[0])/2)
+    #    self.x0_2=self.x0+GRID_SIZE[0]*BOARD_SIZE[0]
+    #    self.y0=int((h-self.gamesize[1])/2)
 
     def card_click_check(self, x, y):
         for i in range(FULL_CARDS*2):
@@ -826,7 +829,7 @@ class Karuta:
                         temp_waka=self.hand.copy()
                         temp_waka_2=self.hand_2.copy()
                         temp_draworder=self.draworder.copy()
-                        temp_draworder_2=self.draworder.copy()
+                        temp_draworder_2=self.draworder_2.copy()
                         self.hand=[]
                         self.draworder=[]
                         self.read_cards=(20-3)*2
