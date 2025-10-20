@@ -320,22 +320,22 @@ class Karuta:
                     if self.card_rect[ii].left < left_edge:
                         self.card_rect[ii].left = left_edge
                         self.wander_ang[ii][0] *= -1
-                        self.wander_ang[ii][1] += -1+cnt%3
+                        self.wander_ang[ii][1] = min(max(self.wander_ang[ii][1]-1+cnt%3,-4),4)
                         self.card_rect[ii].x += self.wander_ang[ii][0]
                     elif self.card_rect[ii].right > right_edge:
                         self.card_rect[ii].right = right_edge
                         self.wander_ang[ii][0] *= -1
-                        self.wander_ang[ii][1] += -1+cnt%3
+                        self.wander_ang[ii][1] = min(max(self.wander_ang[ii][1]-1+cnt%3,-4),4)
                         self.card_rect[ii].x += self.wander_ang[ii][0]
                     if self.card_rect[ii].top < top_edge:
                         self.card_rect[ii].top = top_edge
                         self.wander_ang[ii][1] *= -1 
-                        self.wander_ang[ii][0] += -1+cnt%3
+                        self.wander_ang[ii][0] = min(max(self.wander_ang[ii][0]-1+cnt%3,-4),4)
                         self.card_rect[ii].y += self.wander_ang[ii][1]
                     elif self.card_rect[ii].bottom > bottom_edge:
                         self.card_rect[ii].bottom = bottom_edge
                         self.wander_ang[ii][1] *= -1 
-                        self.wander_ang[ii][0] += -1+cnt%3
+                        self.wander_ang[ii][0] = min(max(self.wander_ang[ii][0]-1+cnt%3,-4),4)
                         self.card_rect[ii].y += self.wander_ang[ii][1]
                 if ii != self.draggingItemIndex:
                     self.screen.blit(self.rotated_img[ii], self.card_rect[ii].topleft)
