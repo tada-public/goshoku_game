@@ -162,7 +162,8 @@ class Karuta:
         self.result_text=None
         #self.draftsc=None
         self.cpu_get_score=0
-
+        self.trim_flag=False
+        self.playtime=0.0
 
     def initialize(self):
         pygame.init()
@@ -191,7 +192,7 @@ class Karuta:
         se["dance"] = pygame.mixer.Sound("ogg/dancingGlockenspiel.ogg")
         for c in range(5):
             for i in range(20):
-                se_waka.append(pygame.mixer.Sound("ogg/{}_{}.ogg".format(c,i)))
+                se_waka.append(pygame.mixer.Sound("ogg/cut{}_{}.ogg".format(c,i)))
         COMBINED_CARD_PATH = 'pic/combined_cards_108x150.png'
         COMBINED_HEAD_PATH = 'pic/combined_heads_39x160.png'
         COMBINED_HEADH_PATH = 'pic/combined_headsh_189x37.png'
@@ -433,6 +434,8 @@ class Karuta:
         img_w, img_h =head_img[self.color][self.hand[ith]].get_rect().size
         crop_width = img_w
         crop_height = min(cnt*(FPS//10)*2,img_h)
+        if self.trim_flag:
+            crop_height=img_h
         if img_h <=0:
             #print(f"img_h <=0, img_h:{img_h}, ith:{ith}, hand[ith]:{self.hand[ith]}")
             return False
@@ -469,6 +472,8 @@ class Karuta:
             return False
         img_w, img_h =headh_img[thiscolor][thisith].get_rect().size
         crop_width = min(cnt*(FPS//10)*2,img_w)
+        if trim_flag:
+            crop_width=img_w
         crop_height = img_h
         crop_rect = pygame.Rect(start_x, start_y, crop_width, crop_height)
         cropped_image = headh_img[thiscolor][thisith].subsurface(crop_rect)
@@ -534,8 +539,12 @@ class Karuta:
         text_rect = text.get_rect(center=(cx,cy))
         text_rect.move_ip(self.x0, self.y0)
         self.screen.blit(text, text_rect)
-        #self.char_flag=False
-    
+        if self.trim_flag:
+            text=font.render(f"Time: {self.playtime/1000:4.2f}", True, YELLOW)
+            text_rect = text.get_rect(center=(cx,cy+FONT_SIZE_RESULT))
+            text_rect.move_ip(self.x0, self.y0)
+            self.screen.blit(text, text_rect)
+
     def update(self,x,y,ith,thisscore):
         getcard=None
         if self.color_2 is None:
@@ -629,6 +638,10 @@ class Karuta:
             color_dance_off, color_dance_on = 'red', 'gray'
         else:
             color_dance_off, color_dance_on = 'gray', 'red'
+        if not self.trim_flag:
+            color_trim_off, color_trim_on = 'red', 'gray'
+        else:
+            color_trim_off, color_trim_on = 'gray', 'red'
 
         box_size=18
         border_w=1
@@ -745,6 +758,25 @@ class Karuta:
         text = self.default_font.render("ON", True, 'white')
         self.text_dance_rect_on = text.get_rect(midleft=(dance_box_x+int(box_size*1.5), dance_box_y+int(box_size*3)))
         self.screen.blit(text, self.text_dance_rect_on)
+
+        trim_box_x=self.x0+GRID_SIZE[0]*0+box_size
+        trim_box_y=self.y0+int(GRID_SIZE[1]*3)+box_size
+        self.trim_rect_off = pygame.Rect(trim_box_x, trim_box_y+box_size, box_size, box_size)
+        self.trim_rect_on = pygame.Rect(trim_box_x, trim_box_y+int(box_size*2.5), box_size, box_size)
+        pygame.draw.rect(self.screen, color_trim_off, self.trim_rect_off)
+        pygame.draw.rect(self.screen, 'gray', self.trim_rect_off, border_w)
+        pygame.draw.rect(self.screen, color_trim_on, self.trim_rect_on)
+        pygame.draw.rect(self.screen, 'gray', self.trim_rect_on, border_w)
+        text = self.default_font.render("quick mode", True, 'white')
+        text_rect = text.get_rect(midleft=(trim_box_x, trim_box_y))
+        self.screen.blit(text, text_rect)
+        text = self.default_font.render("OFF", True, 'white')
+        self.text_trim_rect_off = text.get_rect(midleft=(trim_box_x+int(box_size*1.5), trim_box_y+int(box_size*1.5)))
+        self.screen.blit(text, self.text_trim_rect_off)
+        text = self.default_font.render("ON", True, 'white')
+        self.text_trim_rect_on = text.get_rect(midleft=(trim_box_x+int(box_size*1.5), trim_box_y+int(box_size*3)))
+        self.screen.blit(text, self.text_trim_rect_on)
+
 
         text=self.default_font.render("SELECT COLOR",True, color_char)
         text_rect = text.get_rect(center=(int(GRID_SIZE[0]*2.5), int(GRID_SIZE[1]*0.5)))
@@ -924,6 +956,10 @@ async def main():
                         game.dance_flag=False
                     elif game.dance_rect_on.collidepoint(px, py) or game.text_dance_rect_on.collidepoint(px, py):
                         game.dance_flag=True
+                    elif game.trim_rect_off.collidepoint(px, py) or game.text_trim_rect_off.collidepoint(px, py):
+                        game.trim_flag=False
+                    elif game.trim_rect_on.collidepoint(px, py) or game.text_trim_rect_on.collidepoint(px, py):
+                        game.trim_flag=True
                     elif game.cpu_rect_off.collidepoint(px, py) or game.text_cpu_rect_off.collidepoint(px, py):
                         game.cpu_mode_flag=False
                         game.cpuscore = 0
@@ -1015,6 +1051,8 @@ async def main():
                     stage=3
                 else:
                     read_cnt += 1
+                    if read_cnt==0 and game.trim_flag:
+                        start_time = pygame.time.get_ticks()
                     game.reset_section(read_cnt)
                     cnt = 0
             for event in pygame.event.get():
@@ -1051,6 +1089,9 @@ async def main():
                                 allobtained=True
                         if allobtained:
                             cnt=(SECTION_TIME-2)*FPS
+                            if game.trim_flag:
+                                cnt=-1
+                                end_time=pygame.time.get_ticks()
             if game.cpuscore!=0 and cnt==game.cpuframes[read_cnt] and game.card_rect[game.hand[read_cnt]] is not None:
                 game.cpu_atack(read_cnt,100-int(100/(SECTION_TIME*FPS)*cnt))
                 cnt=(SECTION_TIME-2)*FPS
@@ -1068,6 +1109,7 @@ async def main():
                         game.draw_board_char_2(cnt,read_cnt)
         if stage==3:
             #game.display_result()
+            game.playtime=end_time - start_time
             game.draw_board_result()
             if cnt%SECTION_TIME_RESULT*FPS==0:
                 if game.finish_flag:
