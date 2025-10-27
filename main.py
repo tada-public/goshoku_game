@@ -162,7 +162,7 @@ class Karuta:
         self.result_text=None
         #self.draftsc=None
         self.cpu_get_score=0
-        self.trim_flag=False
+        self.trim_flag=True
         self.playtime=0.0
 
     def initialize(self):
@@ -418,7 +418,10 @@ class Karuta:
         self.button_rect_edge = pygame.Rect(self.x0 + x - w // 2, self.y0 + y - h // 2, w, h)
         pygame.draw.rect(self.screen, button_color_edge, self.button_rect_edge)
         pygame.draw.rect(self.screen, button_color, button_rect)
-        text = self.default_font.render("START", True, text_color)
+        if stage==3 or stage==2:
+            text = self.default_font.render("RESTART", True, text_color)
+        else:
+            text = self.default_font.render("START", True, text_color)           
         text_rect = text.get_rect(center=(x, y))
         self.screen.blit(text, text_rect)
 
@@ -768,7 +771,7 @@ class Karuta:
         pygame.draw.rect(self.screen, 'gray', self.trim_rect_off, border_w)
         pygame.draw.rect(self.screen, color_trim_on, self.trim_rect_on)
         pygame.draw.rect(self.screen, 'gray', self.trim_rect_on, border_w)
-        text = self.default_font.render("quick mode", True, 'white')
+        text = self.default_font.render("time attack", True, 'white')
         text_rect = text.get_rect(midleft=(trim_box_x, trim_box_y))
         self.screen.blit(text, text_rect)
         text = self.default_font.render("OFF", True, 'white')
@@ -877,7 +880,7 @@ class Karuta:
     
     def show_loading_screen(self):
         self.screen.blit(background_image_g, (0, 0), (0, 0, SIZE[0], SIZE[1]))
-        text = self.default_font.render("Goshoku Hyakunin Isshu ver. 0.6       Loading...", True, (255, 255, 255))
+        text = self.default_font.render("Goshoku Hyakunin Isshu ver. 0.8       Loading...", True, (255, 255, 255))
         self.screen.blit(text, (SIZE[0] // 2 - text.get_width() // 2, SIZE[1] // 2 - text.get_height() // 2))
         self.screen.blit(self.screen, (0, 0))
         pygame.display.flip()
@@ -1052,10 +1055,27 @@ async def main():
                     stage=3
                 else:
                     read_cnt += 1
-                    if read_cnt==0 and game.trim_flag:
+                    if read_cnt==0:
                         start_time = pygame.time.get_ticks()
                     game.reset_section(read_cnt)
                     cnt = 0
+            if game.cpuscore!=0 and cnt==game.cpuframes[read_cnt] and game.card_rect[game.hand[read_cnt]] is not None:
+                game.cpu_atack(read_cnt,100-int(100/(SECTION_TIME*FPS)*cnt))
+                cnt=(SECTION_TIME-2)*FPS
+            game.draw_board(cnt,stage)
+            if read_cnt >= 0:
+                game.draw_startbtn(stage)
+            if not game.double_mode_flag:
+                game.draw_board_text(cnt)
+                if game.char_mode_flag:
+                    if read_cnt>=0:
+                        #print(f"{read_cnt}")
+                        game.draw_board_char(cnt,read_cnt)
+            else:
+                game.draw_board_text_2(cnt)
+                if game.char_mode_flag:
+                    if read_cnt>=0:
+                        game.draw_board_char_2(cnt,read_cnt)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -1079,7 +1099,18 @@ async def main():
                     #        if game.card_rect[game.hand[ith]] is not None:
                     #            getcard=game.hand[ith]
                     #if getcard is not None:
-                    if not allobtained:
+                    if game.button_rect_edge.collidepoint(px, py):
+                        cnt=0
+                        read_cnt=0
+                        stage=0
+                        pygame.mixer.stop()
+                        se["maru"].play()
+                        game = Karuta()
+                        game.initialize()
+                        se["bgm"].set_volume(0.5)
+                        se["bgm"].play()
+                        continue
+                    elif not allobtained:
                         res=game.update(px,py,read_cnt,100-int(100/(SECTION_TIME*FPS)*cnt))
                         if res:
                             game.currentobtained+=1
@@ -1092,22 +1123,7 @@ async def main():
                             cnt=(SECTION_TIME-2)*FPS
                             if game.trim_flag:
                                 cnt=-1
-                                end_time=pygame.time.get_ticks()
-            if game.cpuscore!=0 and cnt==game.cpuframes[read_cnt] and game.card_rect[game.hand[read_cnt]] is not None:
-                game.cpu_atack(read_cnt,100-int(100/(SECTION_TIME*FPS)*cnt))
-                cnt=(SECTION_TIME-2)*FPS
-            game.draw_board(cnt,stage)
-            if not game.double_mode_flag:
-                game.draw_board_text(cnt)
-                if game.char_mode_flag:
-                    if read_cnt>=0:
-                        #print(f"{read_cnt}")
-                        game.draw_board_char(cnt,read_cnt)
-            else:
-                game.draw_board_text_2(cnt)
-                if game.char_mode_flag:
-                    if read_cnt>=0:
-                        game.draw_board_char_2(cnt,read_cnt)
+                            end_time=pygame.time.get_ticks()
         if stage==3:
             #game.display_result()
             game.playtime=end_time - start_time
