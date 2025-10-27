@@ -472,7 +472,7 @@ class Karuta:
             return False
         img_w, img_h =headh_img[thiscolor][thisith].get_rect().size
         crop_width = min(cnt*(FPS//10)*2,img_w)
-        if trim_flag:
+        if self.trim_flag:
             crop_width=img_w
         crop_height = img_h
         crop_rect = pygame.Rect(start_x, start_y, crop_width, crop_height)
@@ -644,9 +644,10 @@ class Karuta:
             color_trim_off, color_trim_on = 'gray', 'red'
 
         box_size=18
+        offsetY=-GRID_SIZE[1]//2
         border_w=1
         double_box_x=self.x0+GRID_SIZE[0]*0+box_size
-        double_box_y=self.y0+int(GRID_SIZE[1]*2.5)+box_size
+        double_box_y=self.y0+int(GRID_SIZE[1]*3)+box_size+offsetY
         self.double_rect_off = pygame.Rect(double_box_x, double_box_y+box_size, box_size, box_size)
         self.double_rect_on = pygame.Rect(double_box_x, double_box_y+int(box_size*2.5), box_size, box_size)
         pygame.draw.rect(self.screen, color_double_off, self.double_rect_off)
@@ -664,7 +665,7 @@ class Karuta:
         self.screen.blit(text, self.text_double_rect_on)
 
         cpu_box_x=self.x0+GRID_SIZE[0]*1+box_size
-        cpu_box_y=self.y0+int(GRID_SIZE[1]*2.5)+box_size
+        cpu_box_y=self.y0+int(GRID_SIZE[1]*3)+box_size+offsetY
         self.cpu_rect_off = pygame.Rect(cpu_box_x, cpu_box_y+box_size, box_size, box_size)
         self.cpu_rect_on = pygame.Rect(cpu_box_x, cpu_box_y+int(box_size*2.5), box_size, box_size)
         pygame.draw.rect(self.screen, color_cpu_off, self.cpu_rect_off)
@@ -682,7 +683,7 @@ class Karuta:
         self.screen.blit(text, self.text_cpu_rect_on)
 
         char_box_x=self.x0+GRID_SIZE[0]*3+box_size
-        char_box_y=self.y0+int(GRID_SIZE[1]*2.5)+box_size
+        char_box_y=self.y0+int(GRID_SIZE[1]*3)+box_size+offsetY
         self.char_rect_off = pygame.Rect(char_box_x, char_box_y+box_size, box_size, box_size)
         self.char_rect_on = pygame.Rect(char_box_x, char_box_y+int(box_size*2.5), box_size, box_size)
         pygame.draw.rect(self.screen, color_char_off, self.char_rect_off)
@@ -700,7 +701,7 @@ class Karuta:
         self.screen.blit(text, self.text_char_rect_on)
 
         box_x=self.x0+GRID_SIZE[0]*3+box_size
-        box_y=self.y0+GRID_SIZE[1]*3+box_size
+        box_y=self.y0+int(GRID_SIZE[1]*3.5)+box_size+offsetY
         self.inv_rect_off = pygame.Rect(box_x, box_y+box_size, box_size, box_size)
         self.inv_rect_on = pygame.Rect(box_x, box_y+int(box_size*2.5), box_size, box_size)
         self.inv_rect_on2 = pygame.Rect(box_x, box_y+int(box_size*4), box_size, box_size)
@@ -724,7 +725,7 @@ class Karuta:
         self.screen.blit(text, self.text_inv_rect_on2)
 
         wander_box_x=self.x0+GRID_SIZE[0]*4+box_size
-        wander_box_y=self.y0+int(GRID_SIZE[1]*2.5)+box_size
+        wander_box_y=self.y0+int(GRID_SIZE[1]*3)+box_size+offsetY
         self.wander_rect_off = pygame.Rect(wander_box_x, wander_box_y+box_size, box_size, box_size)
         self.wander_rect_on = pygame.Rect(wander_box_x, wander_box_y+int(box_size*2.5), box_size, box_size)
         pygame.draw.rect(self.screen, color_wander_off, self.wander_rect_off)
@@ -742,7 +743,7 @@ class Karuta:
         self.screen.blit(text, self.text_wander_rect_on)
 
         dance_box_x=self.x0+GRID_SIZE[0]*4+box_size
-        dance_box_y=self.y0+int(GRID_SIZE[1]*3)+box_size
+        dance_box_y=self.y0+int(GRID_SIZE[1]*3.5)+box_size+offsetY
         self.dance_rect_off = pygame.Rect(dance_box_x, dance_box_y+box_size, box_size, box_size)
         self.dance_rect_on = pygame.Rect(dance_box_x, dance_box_y+int(box_size*2.5), box_size, box_size)
         pygame.draw.rect(self.screen, color_dance_off, self.dance_rect_off)
@@ -759,8 +760,8 @@ class Karuta:
         self.text_dance_rect_on = text.get_rect(midleft=(dance_box_x+int(box_size*1.5), dance_box_y+int(box_size*3)))
         self.screen.blit(text, self.text_dance_rect_on)
 
-        trim_box_x=self.x0+GRID_SIZE[0]*0+box_size
-        trim_box_y=self.y0+int(GRID_SIZE[1]*3)+box_size
+        trim_box_x=self.x0+GRID_SIZE[0]*2+box_size
+        trim_box_y=self.y0+int(GRID_SIZE[1]*3)+box_size+offsetY
         self.trim_rect_off = pygame.Rect(trim_box_x, trim_box_y+box_size, box_size, box_size)
         self.trim_rect_on = pygame.Rect(trim_box_x, trim_box_y+int(box_size*2.5), box_size, box_size)
         pygame.draw.rect(self.screen, color_trim_off, self.trim_rect_off)
