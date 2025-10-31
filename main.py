@@ -188,8 +188,9 @@ class Karuta:
         se["shouri3"] = pygame.mixer.Sound("ogg/sentou-syouri3.ogg")
         se["shouri4"] = pygame.mixer.Sound("ogg/sentou-syouri4.ogg")
         se["shouri5"] = pygame.mixer.Sound("ogg/sentou-syouri5.ogg")
-        se["bgm"] = pygame.mixer.Sound("ogg/harunoumi_s.ogg")
-        se["dance"] = pygame.mixer.Sound("ogg/dancingGlockenspiel.ogg")
+        se["bgm"] = pygame.mixer.Sound("ogg/harunoumi_top.ogg")
+        #se["dance"] = pygame.mixer.Sound("ogg/dancingGlockenspiel.ogg")
+        se["dance"] = pygame.mixer.Sound("ogg/harunoumi_arr.ogg")
         for c in range(5):
             for i in range(20):
                 se_waka.append(pygame.mixer.Sound("ogg/cut{}_{}.ogg".format(c,i)))
@@ -1015,7 +1016,7 @@ async def main():
                         se["bgm"].stop()
                         se["maru"].play()
                         if game.dance_flag:
-                            se["dance"].set_volume(0.2)
+                            se["dance"].set_volume(0.9)
                             se["dance"].play(loops=-1)
                         allobtained=False
                         stage=2
@@ -1108,7 +1109,7 @@ async def main():
                         game = Karuta()
                         game.initialize()
                         se["bgm"].set_volume(0.5)
-                        se["bgm"].play()
+                        se["bgm"].play(loops=-1)
                         continue
                     elif not allobtained:
                         res=game.update(px,py,read_cnt,100-int(100/(SECTION_TIME*FPS)*cnt))
@@ -1147,7 +1148,7 @@ async def main():
                         game = Karuta()
                         game.initialize()
                         se["bgm"].set_volume(0.5)
-                        se["bgm"].play()
+                        se["bgm"].play(loops=-1)
                         continue
         #game.screen.blit(game.draftsc, (0, 0))
         pygame.display.flip()
