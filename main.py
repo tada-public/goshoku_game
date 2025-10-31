@@ -540,12 +540,12 @@ class Karuta:
         cx, cy =SIZE[0] // 2, SIZE[1] // 2
         if self.double_mode_flag:
             cx, cy =SIZE[0], SIZE[1] // 2            
-        text_rect = text.get_rect(center=(cx,cy))
+        text_rect = text.get_rect(center=(cx,cy-FONT_SIZE_RESULT))
         text_rect.move_ip(self.x0, self.y0)
         self.screen.blit(text, text_rect)
         if self.trim_flag:
-            text=font.render(f"Time: {self.playtime/1000:4.2f}", True, YELLOW)
-            text_rect = text.get_rect(center=(cx,cy+FONT_SIZE_RESULT))
+            text=font.render(f"Time: {self.playtime/1000:5.2f}", True, YELLOW)
+            text_rect = text.get_rect(center=(cx,cy))
             text_rect.move_ip(self.x0, self.y0)
             self.screen.blit(text, text_rect)
 
@@ -881,7 +881,7 @@ class Karuta:
     
     def show_loading_screen(self):
         self.screen.blit(background_image_g, (0, 0), (0, 0, SIZE[0], SIZE[1]))
-        text = self.default_font.render("Goshoku Hyakunin Isshu ver. 0.8       Loading...", True, (255, 255, 255))
+        text = self.default_font.render("Goshoku Hyakunin Isshu ver. 0.9      Loading...", True, (255, 255, 255))
         self.screen.blit(text, (SIZE[0] // 2 - text.get_width() // 2, SIZE[1] // 2 - text.get_height() // 2))
         self.screen.blit(self.screen, (0, 0))
         pygame.display.flip()
@@ -1170,4 +1170,3 @@ if __name__ == "__main__": # 二重ループを起こさないように変更
             loop.create_task(main())
         else:
             raise
-
