@@ -188,7 +188,7 @@ class Karuta:
         se["shouri3"] = pygame.mixer.Sound("ogg/sentou-syouri3.ogg")
         se["shouri4"] = pygame.mixer.Sound("ogg/sentou-syouri4.ogg")
         se["shouri5"] = pygame.mixer.Sound("ogg/sentou-syouri5.ogg")
-        se["bgm"] = pygame.mixer.Sound("ogg/harunoumi_top.ogg")
+        se["bgm"] = pygame.mixer.Sound("ogg/harunoumi_s.ogg")
         #se["dance"] = pygame.mixer.Sound("ogg/dancingGlockenspiel.ogg")
         se["dance"] = pygame.mixer.Sound("ogg/harunoumi_arr.ogg")
         for c in range(5):
