@@ -190,7 +190,7 @@ class Karuta:
         se["shouri5"] = pygame.mixer.Sound("ogg/sentou-syouri5.ogg")
         se["bgm"] = pygame.mixer.Sound("ogg/harunoumi_s.ogg")
         #se["dance"] = pygame.mixer.Sound("ogg/dancingGlockenspiel.ogg")
-        se["dance"] = pygame.mixer.Sound("ogg/harunoumi_arr.ogg")
+        se["dance"] = pygame.mixer.Sound("ogg/harunoumi_mix.ogg")
         for c in range(5):
             for i in range(20):
                 se_waka.append(pygame.mixer.Sound("ogg/cut{}_{}.ogg".format(c,i)))
@@ -544,7 +544,7 @@ class Karuta:
         text_rect.move_ip(self.x0, self.y0)
         self.screen.blit(text, text_rect)
         if self.trim_flag:
-            text=font.render(f"Time: {self.playtime/1000:5.2f}", True, YELLOW)
+            text=font.render(f"Time: {self.playtime/1000:.2f}", True, YELLOW)
             text_rect = text.get_rect(center=(cx,cy))
             text_rect.move_ip(self.x0, self.y0)
             self.screen.blit(text, text_rect)
@@ -1016,7 +1016,7 @@ async def main():
                         se["bgm"].stop()
                         se["maru"].play()
                         if game.dance_flag:
-                            se["dance"].set_volume(0.9)
+                            se["dance"].set_volume(0.7)
                             se["dance"].play(loops=-1)
                         allobtained=False
                         stage=2
@@ -1053,6 +1053,7 @@ async def main():
                     cnt=-1
                     game.set_result()
                     pygame.mixer.stop()
+                    end_time=pygame.time.get_ticks()
                     stage=3
                 else:
                     read_cnt += 1
@@ -1124,7 +1125,7 @@ async def main():
                             cnt=(SECTION_TIME-2)*FPS
                             if game.trim_flag:
                                 cnt=-1
-                            end_time=pygame.time.get_ticks()
+
         if stage==3:
             #game.display_result()
             game.playtime=end_time - start_time
