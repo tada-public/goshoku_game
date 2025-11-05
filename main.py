@@ -190,7 +190,8 @@ class Karuta:
         se["shouri5"] = pygame.mixer.Sound("ogg/sentou-syouri5.ogg")
         se["bgm"] = pygame.mixer.Sound("ogg/harunoumi_s.ogg")
         #se["dance"] = pygame.mixer.Sound("ogg/dancingGlockenspiel.ogg")
-        se["dance"] = pygame.mixer.Sound("ogg/harunoumi_mix.ogg")
+        #se["dance"] = pygame.mixer.Sound("ogg/harunoumi_mix.ogg")
+        se["dance"] = pygame.mixer.Sound("ogg/harunoumi_hibachi.ogg")
         for c in range(5):
             for i in range(20):
                 se_waka.append(pygame.mixer.Sound("ogg/cut{}_{}.ogg".format(c,i)))
@@ -1171,3 +1172,4 @@ if __name__ == "__main__": # 二重ループを起こさないように変更
             loop.create_task(main())
         else:
             raise
+
