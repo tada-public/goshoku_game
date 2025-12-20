@@ -189,6 +189,7 @@ class Karuta:
         se["shouri4"] = pygame.mixer.Sound("ogg/sentou-syouri4.ogg")
         se["shouri5"] = pygame.mixer.Sound("ogg/sentou-syouri5.ogg")
         se["bgm"] = pygame.mixer.Sound("ogg/harunoumi_s.ogg")
+        se["bell"] = pygame.mixer.Sound("ogg/bells.ogg")
         #se["dance"] = pygame.mixer.Sound("ogg/dancingGlockenspiel.ogg")
         #se["dance"] = pygame.mixer.Sound("ogg/harunoumi_mix.ogg")
         #se["dance"] = pygame.mixer.Sound("ogg/harunoumi_hibachi.ogg")
@@ -537,6 +538,16 @@ class Karuta:
             self.result_text = "Finish..."
 
     def display_result(self):
+        limittime=30
+        if self.playtime/1000 <=limittime and self.result_text != "This is the keyword!":
+            #print(f"{self.playtime/1000}")
+            self.currentfanfale=se["bell"]
+            self.currentfanfale.play()
+            self.result_text = "This is the keyword!"
+            img1 = pygame.image.load("pic/keyword.png")
+        if self.playtime/1000 <=limittime:
+            img1 = pygame.image.load("pic/keyword.png")
+            self.screen.blit(img1, (-300+SIZE[0] // 2, SIZE[1] // 2))
         font = pygame.font.Font(None, FONT_SIZE_RESULT)
         text = font.render(self.result_text, True, YELLOW)
         cx, cy =SIZE[0] // 2, SIZE[1] // 2
@@ -550,6 +561,7 @@ class Karuta:
             text_rect = text.get_rect(center=(cx,cy))
             text_rect.move_ip(self.x0, self.y0)
             self.screen.blit(text, text_rect)
+
 
     def update(self,x,y,ith,thisscore):
         getcard=None
@@ -1173,7 +1185,6 @@ if __name__ == "__main__": # 二重ループを起こさないように変更
             loop.create_task(main())
         else:
             raise
-
 
 
 
