@@ -6,5 +6,6 @@ https://music.storyinvention.com/
 DOVA-SYNDROME
 https://dova-s.jp/bgm/play5610.html
 
-本ソフトは、(株)アクエストの音声合成ライブラリAquesTalkを使用しており、その著作権は同社に帰属します。
-営利目的での使用は当該ライブラリの使用ライセンスが必要です。
+- Atari Teenage Riot
+
+読み上げに、(株)アクエストの音声合成ライブラリAquesTalkを使用しており、その著作権は同社に帰属します。
