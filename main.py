@@ -1031,7 +1031,7 @@ async def main():
                         se["bgm"].stop()
                         se["maru"].play()
                         if game.dance_flag:
-                            se["dance"].set_volume(0.7)
+                            se["dance"].set_volume(0.8)
                             se["dance"].play(loops=-1)
                         allobtained=False
                         stage=2
@@ -1186,6 +1186,7 @@ if __name__ == "__main__": # 二重ループを起こさないように変更
             loop.create_task(main())
         else:
             raise
+
 
 
 
